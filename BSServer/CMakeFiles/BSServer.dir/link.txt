@@ -1,0 +1,1 @@
+/usr/bin/c++    -std=gnu++0x    CMakeFiles/BSServer.dir/main.cpp.o  -o BSServer -rdynamic -lssl -lcrypto -lmysqlclient 
