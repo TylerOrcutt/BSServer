@@ -13,6 +13,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
+#include <fcntl.h>
 #include <resolv.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
@@ -23,6 +24,7 @@
 #include <future>
 
 #include "Client.hpp"
+
 using namespace std;
 class BSServer{
  private:
@@ -30,31 +32,151 @@ class BSServer{
    int serv,port;
   socklen_t clilen;
   struct sockaddr_in serv_addr, cli_addr;
+    struct sockaddr_in serv_addr_out;
   SSL_CTX *ctx;
 
   fd_set master;
 fd_set read_fds;
 int fdmax;
 
- std::vector<Client*> clients;
+ std::vector<Client*> *clients;
   
  public:  
 BSServer(){
  InitServerCTX();
  LoadCertificates( "BS_ALPHA_CERT.pem", "BS_ALPHA_CERT.pem");
+ clients= new vector<Client*>();
 }
 
+/* *** Function definations */
+static void static_broadcastPlayerData(BSServer * serv, int con, std::string data){
+    serv->broadcastPlayerData(con,data);
+
+}
+int handle_data(Client * con);
+
+
+/*  ***** */ 
 void start(){
     
-    if(!isRoot()){
+  /*  if(!isRoot()){
       cout<<"Must be ran as root\n";
       return;
     }
+*/
+serv=socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);
+if(serv<0){ cout<<"sock error\n"; return;}
+memset(&serv_addr,sizeof serv_addr,0);
+
+port=9898;
+serv_addr.sin_family=AF_INET;
+serv_addr.sin_addr.s_addr=INADDR_ANY;
+serv_addr.sin_port =htons(port);
 
 
 
+if(bind(serv,(struct sockaddr*)&serv_addr,sizeof serv_addr)<0){
+  cout<<"error binding\n"; return;
+  }
+  
+  //set to non blocking socket
+ int nonblock=1;
+ if(fcntl(serv,F_SETFL,O_NONBLOCK,nonblock)==-1){
+     cout<<"failed to set non blocking\n";
+     return;
+ }
 
-serv=socket(AF_INET,SOCK_STREAM,0);
+while(true){
+   
+    int bytes=0;
+     char buffer[512];
+    if((bytes=recvfrom(serv,buffer,sizeof(buffer),0,(struct sockaddr*)&cli_addr,&clilen))<=0){
+        continue;
+    }
+    
+     buffer[bytes-2]='\0';
+    std::stringstream ss;
+     ss<<buffer;
+        std::string retData = ss.str();
+   /*  for(int i=0;i<retData.length();i++){
+   if(retData.substr(i,1)=="\n" ){
+       std::cout<<"removed return char   " <<i<< "\n";
+     retData.erase(i,1);  
+ //  i--;
+   //return bytes;
+}
+}*/
+
+Client *cli;
+if((cli = getClient(cli_addr))==nullptr){
+ std::cout<< "new connection from "<< cli_addr.sin_addr.s_addr<<std::endl;
+    Client *client = new Client();
+    client->cli_addr =  cli_addr;
+    client->clilen = clilen;
+    clients->push_back(client);
+    cli = client;
+ 
+ }
+//pull sequence id off packet
+std::string strid="";
+for(int i=0;i<retData.length();i++){
+    if(retData.substr(i,1)==":"){
+        retData.erase(0,i);
+        break;
+    }else{
+        strid+=retData.substr(i,1);
+    }
+}
+  int id = atoi(strid.c_str());
+  if(id<cli->getSequenceId()){
+      continue; //packet is old, throw it out
+  }
+  cli->setSequenceId(id);
+  
+    cout<<ss.str()<<endl;
+   //  sendto(serv, retData.c_str(), strlen(retData.c_str()), 0, (struct sockaddr*) &cli_addr,clilen);
+         
+    broadcastPlayerData(cli_addr, ss.str());
+}
+close(serv);
+}
+bool cliExist(sockaddr_in addr){
+     for(int i=0;i<clients->size();i++){
+      if((addr.sin_addr.s_addr == (*clients)[i]->cli_addr.sin_addr.s_addr) ){
+         return true;
+      }
+ }
+    return false;
+}
+
+
+void broadcastPlayerData(sockaddr_in addr, std::string data){
+        for(int i=0;i<clients->size();i++){
+     if((addr.sin_addr.s_addr != (*clients)[i]->cli_addr.sin_addr.s_addr) ){
+         struct sockaddr_in cli = (*clients)[i]->cli_addr;
+           
+       //   cli.sin_port =htons(port+1);
+      (*clients)[i]->incPackets_sent();
+       std::stringstream id;
+       id<<(*clients)[i]->getPacketsSent()<<":";
+       data = id.str() + data;
+           
+         sendto(serv, data.c_str(), strlen(data.c_str()), 0, (struct sockaddr*) &(*clients)[i]->cli_addr,(*clients)[i]->clilen);
+         
+     }
+ }
+}
+
+Client * getClient(sockaddr_in addr){     
+    for(int i=0;i<clients->size();i++){
+      if((addr.sin_addr.s_addr == (*clients)[i]->cli_addr.sin_addr.s_addr) ){
+         return (*clients)[i];
+      }
+ }
+ return nullptr;
+    
+}
+/*serv=socket(AF_INET,SOCK_STREAM,0);
 if(serv<0){ cout<<"sock error\n"; return;}
 
 memset(&serv_addr,sizeof serv_addr,0);
@@ -112,8 +234,9 @@ read_fds=master;
         cout<<"Accepted SSL connection\n";
 
       }*/
+      /*
          Client *cli = new Client(newsock);
-        clients.push_back(cli);
+        clients->push_back(cli);
         FD_SET(newsock,&master);
 
       //send_welcome(newsock);
@@ -123,10 +246,10 @@ read_fds=master;
       FD_CLR(newsock,&master);
     }
     }else{ //handle data from client
-      for(int con=0;con<clients.size();con++){
-        if(i==clients[con]->getConnection()){
+      for(int con=0;con<clients->size();con++){
+        if(i==(*clients)[con]->getConnection()){
 
-              if(handle_data(clients[con])<=0){ //connection lost?
+              if(handle_data((*clients)[con])<=0){ //connection lost?
                
               //broadcast disconnect here
               //clients[con]->setLogedin(false);
@@ -139,10 +262,10 @@ read_fds=master;
               std::cout<<"Connection closed\n";
 
              // cout<<"connection "<<clients[con]->getConnection()<<" closed.\n";
-              close(clients[con]->getConnection());
+              close((*clients)[con]->getConnection());
               FD_CLR(i,&master);
-              delete(clients[con]);
-              clients.erase(clients.begin()+con);
+              delete((*clients)[con]);
+              clients->erase(clients->begin()+con);
 
               }
          break;
@@ -158,29 +281,8 @@ read_fds=master;
 
 close(serv);
 SSL_CTX_free(ctx);
-}
+}*/
 
-int handle_data(Client * con){
-    char buffer[256];
-  int bytes;
- 
-  bytes=read(con->getConnection(),buffer,sizeof(buffer));
-  buffer[bytes-2]='\0';
-  std::stringstream ss;
-  if(bytes>0){
-   //    cout<<"data?\n";
-    
-    ss<<buffer;
-  }else{
-     // std::cout<<"closing connection\n";
-      return bytes;
-  }
-  //std::cout<<buffer<<std::endl;
-  cout<<ss.str()<<endl;
-  //sendData(con->getConnection(),"Hello world");
-  
-  return bytes;
-}
 
   void sendData(int ssl, std::string data){
 data=data+" \n";
@@ -190,11 +292,19 @@ data=data+" \n";
   }
 }
   void sendData(SSL* ssl, std::string data){
-data=data+" \n";
+//data=data+" \n";
   int bytes_sent=SSL_write(ssl,data.c_str(),strlen(data.c_str()));
     if(bytes_sent==0){
     std::cout<<">>>failed to send message\n";
   }
+}
+
+void broadcastPlayerData(int sck, std::string data){
+    for(int i=0;i<clients->size();i++){
+        if(sck != (*clients)[i]->getConnection()){
+            sendData((*clients)[i]->getConnection(),data);
+        }
+    }
 }
 //#MARK SSL shit
 void LoadCertificates( char* CertFile, char* KeyFile){

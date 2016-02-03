@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home/twittumz/Desktop/git/BSServer/BSServer
 CMakeFiles/BSServer.dir/all:
 	$(MAKE) -f CMakeFiles/BSServer.dir/build.make CMakeFiles/BSServer.dir/depend
 	$(MAKE) -f CMakeFiles/BSServer.dir/build.make CMakeFiles/BSServer.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/twittumz/Desktop/git/BSServer/BSServer/CMakeFiles  1
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/twittumz/Desktop/git/BSServer/BSServer/CMakeFiles  1 2
 	@echo "Built target BSServer"
 .PHONY : CMakeFiles/BSServer.dir/all
 
@@ -69,7 +69,7 @@ all: CMakeFiles/BSServer.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/BSServer.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/twittumz/Desktop/git/BSServer/BSServer/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/twittumz/Desktop/git/BSServer/BSServer/CMakeFiles 2
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/BSServer.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/twittumz/Desktop/git/BSServer/BSServer/CMakeFiles 0
 .PHONY : CMakeFiles/BSServer.dir/rule

@@ -115,6 +115,30 @@ BSServer/fast:
 	$(MAKE) -f CMakeFiles/BSServer.dir/build.make CMakeFiles/BSServer.dir/build
 .PHONY : BSServer/fast
 
+DataHandle.o: DataHandle.cpp.o
+.PHONY : DataHandle.o
+
+# target to build an object file
+DataHandle.cpp.o:
+	$(MAKE) -f CMakeFiles/BSServer.dir/build.make CMakeFiles/BSServer.dir/DataHandle.cpp.o
+.PHONY : DataHandle.cpp.o
+
+DataHandle.i: DataHandle.cpp.i
+.PHONY : DataHandle.i
+
+# target to preprocess a source file
+DataHandle.cpp.i:
+	$(MAKE) -f CMakeFiles/BSServer.dir/build.make CMakeFiles/BSServer.dir/DataHandle.cpp.i
+.PHONY : DataHandle.cpp.i
+
+DataHandle.s: DataHandle.cpp.s
+.PHONY : DataHandle.s
+
+# target to generate assembly for a file
+DataHandle.cpp.s:
+	$(MAKE) -f CMakeFiles/BSServer.dir/build.make CMakeFiles/BSServer.dir/DataHandle.cpp.s
+.PHONY : DataHandle.cpp.s
+
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -148,6 +172,9 @@ help:
 	@echo "... BSServer"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... DataHandle.o"
+	@echo "... DataHandle.i"
+	@echo "... DataHandle.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

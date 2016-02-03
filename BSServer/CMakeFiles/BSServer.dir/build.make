@@ -72,14 +72,39 @@ CMakeFiles/BSServer.dir/main.cpp.o.provides: CMakeFiles/BSServer.dir/main.cpp.o.
 
 CMakeFiles/BSServer.dir/main.cpp.o.provides.build: CMakeFiles/BSServer.dir/main.cpp.o
 
+CMakeFiles/BSServer.dir/DataHandle.cpp.o: CMakeFiles/BSServer.dir/flags.make
+CMakeFiles/BSServer.dir/DataHandle.cpp.o: DataHandle.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/twittumz/Desktop/git/BSServer/BSServer/CMakeFiles $(CMAKE_PROGRESS_2)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/BSServer.dir/DataHandle.cpp.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/BSServer.dir/DataHandle.cpp.o -c /home/twittumz/Desktop/git/BSServer/BSServer/DataHandle.cpp
+
+CMakeFiles/BSServer.dir/DataHandle.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/BSServer.dir/DataHandle.cpp.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/twittumz/Desktop/git/BSServer/BSServer/DataHandle.cpp > CMakeFiles/BSServer.dir/DataHandle.cpp.i
+
+CMakeFiles/BSServer.dir/DataHandle.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/BSServer.dir/DataHandle.cpp.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/twittumz/Desktop/git/BSServer/BSServer/DataHandle.cpp -o CMakeFiles/BSServer.dir/DataHandle.cpp.s
+
+CMakeFiles/BSServer.dir/DataHandle.cpp.o.requires:
+.PHONY : CMakeFiles/BSServer.dir/DataHandle.cpp.o.requires
+
+CMakeFiles/BSServer.dir/DataHandle.cpp.o.provides: CMakeFiles/BSServer.dir/DataHandle.cpp.o.requires
+	$(MAKE) -f CMakeFiles/BSServer.dir/build.make CMakeFiles/BSServer.dir/DataHandle.cpp.o.provides.build
+.PHONY : CMakeFiles/BSServer.dir/DataHandle.cpp.o.provides
+
+CMakeFiles/BSServer.dir/DataHandle.cpp.o.provides.build: CMakeFiles/BSServer.dir/DataHandle.cpp.o
+
 # Object files for target BSServer
 BSServer_OBJECTS = \
-"CMakeFiles/BSServer.dir/main.cpp.o"
+"CMakeFiles/BSServer.dir/main.cpp.o" \
+"CMakeFiles/BSServer.dir/DataHandle.cpp.o"
 
 # External object files for target BSServer
 BSServer_EXTERNAL_OBJECTS =
 
 BSServer: CMakeFiles/BSServer.dir/main.cpp.o
+BSServer: CMakeFiles/BSServer.dir/DataHandle.cpp.o
 BSServer: CMakeFiles/BSServer.dir/build.make
 BSServer: /usr/lib/x86_64-linux-gnu/libmysqlclient.so
 BSServer: CMakeFiles/BSServer.dir/link.txt
@@ -91,6 +116,7 @@ CMakeFiles/BSServer.dir/build: BSServer
 .PHONY : CMakeFiles/BSServer.dir/build
 
 CMakeFiles/BSServer.dir/requires: CMakeFiles/BSServer.dir/main.cpp.o.requires
+CMakeFiles/BSServer.dir/requires: CMakeFiles/BSServer.dir/DataHandle.cpp.o.requires
 .PHONY : CMakeFiles/BSServer.dir/requires
 
 CMakeFiles/BSServer.dir/clean:

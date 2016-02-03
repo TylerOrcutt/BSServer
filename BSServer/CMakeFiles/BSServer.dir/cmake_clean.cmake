@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/BSServer.dir/main.cpp.o"
+  "CMakeFiles/BSServer.dir/DataHandle.cpp.o"
   "BSServer.pdb"
   "BSServer"
 )

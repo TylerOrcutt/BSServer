@@ -56,5 +56,5 @@ else()
     # Error; with REQUIRED, pkg_search_module() will throw an error by it's own
 endif()
 
-add_executable(BSServer main.cpp)
-target_link_libraries(BSServer ${OPENSSL_LIBRARIES} ${MYSQL_LIBRARY})
+add_executable(BSServer main.cpp DataHandle.cpp )
+target_link_libraries(BSServer  -lpthread ${OPENSSL_LIBRARIES} ${MYSQL_LIBRARY})
