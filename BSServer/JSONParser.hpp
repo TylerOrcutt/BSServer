@@ -16,7 +16,7 @@ static Dictionary * parseJson(std::string data){
       //ignore data till we find the value pair
       for(int k=i;k<data.length()-1 && data.substr(k,1)!=":";k++){i=k;}
      i++;
-      for(int k=i;k<data.length()-1 && data.substr(k,1)!="\"" && data.substr(k,1)!="[";k++ ){i=k;}
+      for(int k=i;k<data.length()-1 && data.substr(k,1)!="\"" && data.substr(k,1)!="}";k++ ){i=k;}
       //value pair
       i++;
       if(data.substr(i,1)=="\""){
@@ -26,7 +26,7 @@ static Dictionary * parseJson(std::string data){
             for(int k=i;k<data.length() && data.substr(k,1)==",";k++){i=k;}
             i++;
       }
-        if(data.substr(i,1)=="["){
+        if(data.substr(i,1)=="{"){
           i++;
       //    std::cout<<"array pair\n";
         n.items=  getSubItems(data, &i);
@@ -43,7 +43,7 @@ static std::vector<DictionaryItem> getSubItems(std::string data, int *index){
 std::vector<DictionaryItem> a;
 //std::cout<<"getting sub items\n\n";
 
-for(int i=(*index);i<data.length() && data.substr(i,1) !="]";i++){
+for(int i=(*index);i<data.length() && data.substr(i,1) !="}";i++){
   if(data.substr(i,1)=="\""){
     DictionaryItem  n;
     n.key = getValue(data,i+1);
@@ -51,7 +51,7 @@ for(int i=(*index);i<data.length() && data.substr(i,1) !="]";i++){
     //ignore data till we find the value pair
     for(int k=i;k<data.length() && data.substr(k,1)!=":";k++){i=k;}
     i++;
-    for(int k=i;k<data.length() && data.substr(k,1)!="\"" && data.substr(k,1)!="[";k++ ){i=k;}
+    for(int k=i;k<data.length() && data.substr(k,1)!="\"" && data.substr(k,1)!="{";k++ ){i=k;}
     //value pair
     i++;
     if(data.substr(i,1)=="\""){
@@ -61,7 +61,7 @@ for(int i=(*index);i<data.length() && data.substr(i,1) !="]";i++){
           for(int k=i;k<data.length() && data.substr(k,1)==",";k++){i=k;}
           i++;
     }else
-      if(data.substr(i,1)=="["){
+      if(data.substr(i,1)=="{"){
         i++;
         std::cout<<"array pair\n";
       n.items=  getSubItems(data, &i);

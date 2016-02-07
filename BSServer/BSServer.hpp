@@ -2,6 +2,7 @@
 //TODO: android sockets are wierd fix to work with them..
 
 #define MAX_CLIENTS 16
+
 #include <iostream>
 #include <string.h>
 #include <sstream>
@@ -29,6 +30,7 @@ using namespace std;
 class BSServer{
  private:
   
+  
    int serv,port;
   socklen_t clilen;
   struct sockaddr_in serv_addr, cli_addr;
@@ -40,6 +42,8 @@ fd_set read_fds;
 int fdmax;
 
  std::vector<Client*> *clients;
+ std::string idenity = "96e419b4ec90d1409f5dbc5aeba62acd325a11c9";
+ 
   
  public:  
 BSServer(){
@@ -53,7 +57,7 @@ static void static_broadcastPlayerData(BSServer * serv, int con, std::string dat
     serv->broadcastPlayerData(con,data);
 
 }
-int handle_data(Client * con);
+int handle_data(std::string data, sockaddr_in cli, socklen_t clen);
 
 
 /*  ***** */ 
@@ -109,6 +113,14 @@ while(true){
 
 Client *cli;
 if((cli = getClient(cli_addr))==nullptr){
+    if(retData=="Identify"){
+        //return idenity 
+        continue;
+    }
+    
+    if(clients->size()>= MAX_CLIENTS){
+        continue;//server is already at max capacity
+    }
  std::cout<< "new connection from "<< cli_addr.sin_addr.s_addr<<std::endl;
     Client *client = new Client();
     client->cli_addr =  cli_addr;
@@ -136,7 +148,7 @@ for(int i=0;i<retData.length();i++){
     cout<<ss.str()<<endl;
    //  sendto(serv, retData.c_str(), strlen(retData.c_str()), 0, (struct sockaddr*) &cli_addr,clilen);
          
-    broadcastPlayerData(cli_addr, ss.str());
+    broadcastPlayerData(cli_addr, retData);
 }
 close(serv);
 }
