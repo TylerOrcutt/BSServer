@@ -106,7 +106,6 @@ BSServer_EXTERNAL_OBJECTS =
 BSServer: CMakeFiles/BSServer.dir/main.cpp.o
 BSServer: CMakeFiles/BSServer.dir/DataHandle.cpp.o
 BSServer: CMakeFiles/BSServer.dir/build.make
-BSServer: /usr/lib/x86_64-linux-gnu/libmysqlclient.so
 BSServer: CMakeFiles/BSServer.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --red --bold "Linking CXX executable BSServer"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/BSServer.dir/link.txt --verbose=$(VERBOSE)

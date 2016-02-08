@@ -43,8 +43,7 @@ int fdmax;
 
  std::vector<Client*> *clients;
  std::string idenity = "96e419b4ec90d1409f5dbc5aeba62acd325a11c9";
- 
-  
+ std::string map = "map2";
  public:  
 BSServer(){
  InitServerCTX();
@@ -102,6 +101,12 @@ while(true){
     std::stringstream ss;
      ss<<buffer;
         std::string retData = ss.str();
+        if(retData.substr(0,idenity.length()) != idenity){
+            continue;//packet doesnt belong to us - invalid idenity
+        }
+       retData= retData.erase(0,idenity.length()+1);
+        
+        
    /*  for(int i=0;i<retData.length();i++){
    if(retData.substr(i,1)=="\n" ){
        std::cout<<"removed return char   " <<i<< "\n";
@@ -110,11 +115,12 @@ while(true){
    //return bytes;
 }
 }*/
-
+std::cout<<retData<<endl;
 Client *cli;
 if((cli = getClient(cli_addr))==nullptr){
     if(retData=="Identify"){
         //return idenity 
+        sendIdentity(cli_addr,clilen);
         continue;
     }
     
@@ -187,6 +193,18 @@ Client * getClient(sockaddr_in addr){
  }
  return nullptr;
     
+}
+
+void sendIdentity(sockaddr_in addr, socklen_t addrlen){
+    std::stringstream json;
+    json<<"{\"idenity\":{\"Map\":\""<<map<<"\",\"players\":\""<<clients->size()<<"\",\"maxplayers\":\""<<MAX_CLIENTS<<"\"}}";
+    sendData(json.str(),addr,addrlen);
+    
+    
+}
+void sendData(std::string data, sockaddr_in addr, socklen_t alen){
+      sendto(serv, data.c_str(), strlen(data.c_str()), 0, (struct sockaddr*) &addr,alen);
+         
 }
 /*serv=socket(AF_INET,SOCK_STREAM,0);
 if(serv<0){ cout<<"sock error\n"; return;}
