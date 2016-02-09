@@ -1,7 +1,20 @@
 #include <iostream>
 #include "BSServer.hpp"
+#include "Engine.hpp"
+#include <thread>
+static void engineThread(BSServer *serv){
+    Engine *eng;
+    eng = new Engine(serv);
+    eng->run();
+}
 int main(){
-    BSServer serv;
-    serv.start();
+    BSServer *  serv;
+    serv = new BSServer();
+  
+    
+    std::thread t(&engineThread,serv);
+ 
+      serv->start();
+ 
     return 0;
 }

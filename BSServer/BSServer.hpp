@@ -20,12 +20,12 @@
 #include <openssl/err.h>
 #include <openssl/crypto.h>
 #include <vector>
-
+#include <unistd.h>
 #include <thread>
 #include <future>
 
 #include "Client.hpp"
-
+#include "Helper.hpp"
 using namespace std;
 class BSServer{
  private:
@@ -90,7 +90,7 @@ if(bind(serv,(struct sockaddr*)&serv_addr,sizeof serv_addr)<0){
  }
 
 while(true){
-   
+   usleep(1000);
     int bytes=0;
      char buffer[512];
     if((bytes=recvfrom(serv,buffer,sizeof(buffer),0,(struct sockaddr*)&cli_addr,&clilen))<=0){
@@ -106,18 +106,7 @@ while(true){
         }
        retData= retData.erase(0,idenity.length()+1);
         
-        
-   /*  for(int i=0;i<retData.length();i++){
-   if(retData.substr(i,1)=="\n" ){
-       std::cout<<"removed return char   " <<i<< "\n";
-     retData.erase(i,1);  
- //  i--;
-   //return bytes;
-}
-}*/
-std::cout<<retData<<endl;
-Client *cli;
-if((cli = getClient(cli_addr))==nullptr){
+
     if(retData=="Identify"){
         //return idenity 
         cout<<"Sent Identify\n";
@@ -125,6 +114,11 @@ if((cli = getClient(cli_addr))==nullptr){
         continue;
     }
     
+//std::cout<<retData<<endl;
+Client *cli;
+
+if((cli = getClient(cli_addr))==nullptr){
+
     if(clients->size()>= MAX_CLIENTS){
         continue;//server is already at max capacity
     }
@@ -132,12 +126,18 @@ if((cli = getClient(cli_addr))==nullptr){
     Client *client = new Client();
     client->cli_addr =  cli_addr;
     client->clilen = clilen;
+   
     clients->push_back(client);
     cli = client;
+    
  
  }
+ 
+ 
+  cli->setLastResponce(Helper::getTime());
 //pull sequence id off packet
 std::string strid="";
+
 for(int i=0;i<retData.length();i++){
     if(retData.substr(i,1)==":"){
         retData.erase(0,i);
@@ -156,6 +156,7 @@ for(int i=0;i<retData.length();i++){
    //  sendto(serv, retData.c_str(), strlen(retData.c_str()), 0, (struct sockaddr*) &cli_addr,clilen);
          
     broadcastPlayerData(cli_addr, retData);
+    
 }
 close(serv);
 }
@@ -206,6 +207,9 @@ void sendIdentity(sockaddr_in addr, socklen_t addrlen){
 void sendData(std::string data, sockaddr_in addr, socklen_t alen){
       sendto(serv, data.c_str(), strlen(data.c_str()), 0, (struct sockaddr*) &addr,alen);
          
+}
+std::vector<Client*> * getClients(){
+    return clients;
 }
 /*serv=socket(AF_INET,SOCK_STREAM,0);
 if(serv<0){ cout<<"sock error\n"; return;}
