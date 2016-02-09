@@ -11,6 +11,7 @@ class Client{
   int packet_sequence=0;
   float x=0,y=0;
   double angle=0;
+  long lastResponce = 0;
   public:  
   Client(int nsock){
      // _ssl=s;
@@ -51,6 +52,12 @@ class Client{
     }
     int getSequenceId(){
         return packet_sequence;
+    }
+    long getLastResponce(){
+        return lastResponce;
+    }
+    void setLastResponce(long rp){
+        lastResponce=rp;
     }
     socklen_t clilen;
   struct sockaddr_in  cli_addr;

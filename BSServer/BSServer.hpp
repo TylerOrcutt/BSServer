@@ -42,7 +42,7 @@ fd_set read_fds;
 int fdmax;
 
  std::vector<Client*> *clients;
- std::string idenity = "96e419b4ec90d1409f5dbc5aeba62acd325a11c9";
+ std::string idenity = "96e419b4ec90d1409f5d";
  std::string map = "map2";
  public:  
 BSServer(){
@@ -120,6 +120,7 @@ Client *cli;
 if((cli = getClient(cli_addr))==nullptr){
     if(retData=="Identify"){
         //return idenity 
+        cout<<"Sent Identify\n";
         sendIdentity(cli_addr,clilen);
         continue;
     }
@@ -147,7 +148,7 @@ for(int i=0;i<retData.length();i++){
 }
   int id = atoi(strid.c_str());
   if(id<cli->getSequenceId()){
-      continue; //packet is old, throw it out
+      continue; //packet is old, throw it out for now
   }
   cli->setSequenceId(id);
   
@@ -197,7 +198,7 @@ Client * getClient(sockaddr_in addr){
 
 void sendIdentity(sockaddr_in addr, socklen_t addrlen){
     std::stringstream json;
-    json<<"{\"idenity\":{\"Map\":\""<<map<<"\",\"players\":\""<<clients->size()<<"\",\"maxplayers\":\""<<MAX_CLIENTS<<"\"}}";
+    json<<"{\"identity\":{\"Map\":\""<<map<<"\",\"players\":\""<<clients->size()<<"\",\"maxplayers\":\""<<MAX_CLIENTS<<"\"}}";
     sendData(json.str(),addr,addrlen);
     
     
