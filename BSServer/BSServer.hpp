@@ -83,14 +83,15 @@ if(bind(serv,(struct sockaddr*)&serv_addr,sizeof serv_addr)<0){
   }
   
   //set to non blocking socket
+  /*
  int nonblock=1;
  if(fcntl(serv,F_SETFL,O_NONBLOCK,nonblock)==-1){
      cout<<"failed to set non blocking\n";
      return;
- }
+ }*/
 
 while(true){
-   usleep(1000);
+   //usleep(1000);
     int bytes=0;
      char buffer[512];
     if((bytes=recvfrom(serv,buffer,sizeof(buffer),0,(struct sockaddr*)&cli_addr,&clilen))<=0){
@@ -140,7 +141,7 @@ std::string strid="";
 
 for(int i=0;i<retData.length();i++){
     if(retData.substr(i,1)==":"){
-        retData.erase(0,i);
+        retData=retData.erase(0,i+1);
         break;
     }else{
         strid+=retData.substr(i,1);
@@ -149,9 +150,25 @@ for(int i=0;i<retData.length();i++){
   int id = atoi(strid.c_str());
   if(id<cli->getSequenceId()){
       continue; //packet is old, throw it out for now
-  }
+  }else{
   cli->setSequenceId(id);
+  }
   
+    if(retData=="Disconnect"){
+        std::cout<<"Received disconnect\n";
+        int cli_id=-1;
+        if((cli_id=getClientId(cli_addr))>=0){
+         clients->erase(clients->begin()+cli_id);
+        std::cout<<"Client "<<cli_id<<" sent dc\n";
+        }
+           continue;
+    }
+  if(retData=="Pong"){
+      
+       cli->setPongTimeReceived(Helper::getTime());
+       std::cout<<"Pong Received, Latency:"<<cli->getPongTimeReceived()-cli->getLastPing()<<"\n";
+       continue;
+  }
     cout<<ss.str()<<endl;
    //  sendto(serv, retData.c_str(), strlen(retData.c_str()), 0, (struct sockaddr*) &cli_addr,clilen);
          
@@ -179,7 +196,7 @@ void broadcastPlayerData(sockaddr_in addr, std::string data){
       (*clients)[i]->incPackets_sent();
        std::stringstream id;
        id<<(*clients)[i]->getPacketsSent()<<":";
-       data = id.str() + data;
+     //  data = id.str() + data;
            
          sendto(serv, data.c_str(), strlen(data.c_str()), 0, (struct sockaddr*) &(*clients)[i]->cli_addr,(*clients)[i]->clilen);
          
@@ -197,6 +214,15 @@ Client * getClient(sockaddr_in addr){
     
 }
 
+int getClientId(sockaddr_in addr){     
+    for(int i=0;i<clients->size();i++){
+      if((addr.sin_addr.s_addr == (*clients)[i]->cli_addr.sin_addr.s_addr) ){
+         return i;
+      }
+ }
+ return -1;
+    
+}
 void sendIdentity(sockaddr_in addr, socklen_t addrlen){
     std::stringstream json;
     json<<"{\"identity\":{\"Map\":\""<<map<<"\",\"players\":\""<<clients->size()<<"\",\"maxplayers\":\""<<MAX_CLIENTS<<"\"}}";

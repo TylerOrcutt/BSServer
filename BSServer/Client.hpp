@@ -12,6 +12,9 @@ class Client{
   float x=0,y=0;
   double angle=0;
   unsigned long lastResponce = 0;
+  unsigned long lastPing = 0;
+  unsigned long pingTimeSent=0;
+  unsigned long pongTimeReceived=0;
   public:  
   Client(int nsock){
      // _ssl=s;
@@ -58,6 +61,27 @@ class Client{
     }
     void setLastResponce(unsigned long rp){
         lastResponce=rp;
+    }
+    
+    unsigned long getLastPing(){
+        return lastPing;
+    }
+    void setLastPing(unsigned long rp){
+        lastPing=rp;
+    }
+    
+    unsigned long getPingTimeSent(){
+        return pingTimeSent;
+    }
+    void setPingTimeSent(unsigned long rp){
+        pingTimeSent=rp;
+    }
+
+       unsigned long getPongTimeReceived(){
+        return pongTimeReceived;
+    }
+    void setPongTimeReceived(unsigned long rp){
+        pongTimeReceived=rp;
     }
     socklen_t clilen;
   struct sockaddr_in  cli_addr;
