@@ -71,7 +71,7 @@ serv=socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);
 if(serv<0){ cout<<"sock error\n"; return;}
 memset(&serv_addr,sizeof serv_addr,0);
 
-port=9898;
+port=9899;
 serv_addr.sin_family=AF_INET;
 serv_addr.sin_addr.s_addr=INADDR_ANY;
 serv_addr.sin_port =htons(port);
@@ -130,6 +130,9 @@ if((cli = getClient(cli_addr))==nullptr){
    
     clients->push_back(client);
     cli = client;
+    std::stringstream idjson ;
+    idjson<< "{\"id\":\""<<cli_addr.sin_addr.s_addr<<"\"}";
+    sendData(idjson.str(),cli_addr,clilen);
     
  
  }
@@ -172,9 +175,10 @@ for(int i=0;i<retData.length();i++){
     cout<<ss.str()<<endl;
    //  sendto(serv, retData.c_str(), strlen(retData.c_str()), 0, (struct sockaddr*) &cli_addr,clilen);
          
-    broadcastPlayerData(cli_addr, retData);
+  //  broadcastPlayerData(cli_addr, retData);
+  cli->pushCommand(retData);
     
-}
+}//
 close(serv);
 }
 bool cliExist(sockaddr_in addr){
@@ -231,6 +235,7 @@ void sendIdentity(sockaddr_in addr, socklen_t addrlen){
     
 }
 void sendData(std::string data, sockaddr_in addr, socklen_t alen){
+ //   serv_addr.sin_port=htons(9898);
       sendto(serv, data.c_str(), strlen(data.c_str()), 0, (struct sockaddr*) &addr,alen);
          
 }

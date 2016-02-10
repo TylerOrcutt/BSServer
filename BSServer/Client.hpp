@@ -2,6 +2,8 @@
 #include <iostream>
 #include <openssl/ssl.h>
 #include <sys/socket.h>
+#include <list>
+#include <string>
 class Client{
   private: 
   //SSL * _ssl;
@@ -15,12 +17,15 @@ class Client{
   unsigned long lastPing = 0;
   unsigned long pingTimeSent=0;
   unsigned long pongTimeReceived=0;
+  std::list<std::string> * commands;
   public:  
   Client(int nsock){
      // _ssl=s;
       socket=nsock;
+      commands = new std::list<std::string>();
   }  
     Client(){
+          commands = new std::list<std::string>();
     }
  /* SSL* ssl(){
       return _ssl;
@@ -82,6 +87,20 @@ class Client{
     }
     void setPongTimeReceived(unsigned long rp){
         pongTimeReceived=rp;
+    }
+    
+    void pushCommand(std::string cmd){
+        commands->push_back(cmd);
+        
+    }
+    int commands_size(){
+        return commands->size();
+    }
+    
+    std::string popCommand(){
+        std::string cmd = commands->front();
+        commands->pop_front();
+        return cmd;
     }
     socklen_t clilen;
   struct sockaddr_in  cli_addr;

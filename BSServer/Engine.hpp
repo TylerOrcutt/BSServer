@@ -5,6 +5,7 @@
 #include "Helper.hpp"
 #include <vector>
 #include <iostream>
+#include <string>
 #include <sstream>
 class Engine{
     private:
@@ -22,6 +23,7 @@ class Engine{
               if(Helper::getTime()-cli->getLastResponce() >30000){
                   clients->erase(clients->begin()+i);
                   std::cout<<"Kicked client "<<i<<" Hasnt responed for awhile\n";
+                  continue;
               }
               
                   if(Helper::getTime()-cli->getLastPing() >10000){
@@ -29,6 +31,13 @@ class Engine{
                       serv->sendData("Ping",cli->cli_addr,cli->clilen);
                       std::cout<<"Sent ping\n";
                       
+                  }
+                  if(cli->commands_size()>0){
+                      std::string  cmd = cli->popCommand();
+                      std::stringstream id;
+                     id<<"id:"<<cli->cli_addr.sin_addr.s_addr<<":"<<cmd;
+                     std::cout<<id.str()<<std::endl;
+                      serv->broadcastPlayerData(cli->cli_addr,id.str());
                   }
           }
           

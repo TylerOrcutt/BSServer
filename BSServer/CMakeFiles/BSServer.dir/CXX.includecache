@@ -59,23 +59,9 @@ openssl/ssl.h
 -
 sys/socket.h
 -
-
-/home/twittumz/Desktop/git/BSServer/BSServer/DataHandle.cpp
-BSServer.hpp
-/home/twittumz/Desktop/git/BSServer/BSServer/BSServer.hpp
-JSONParser.hpp
-/home/twittumz/Desktop/git/BSServer/BSServer/JSONParser.hpp
+list
+-
 string
--
-thread
--
-future
--
-
-/home/twittumz/Desktop/git/BSServer/BSServer/Dictionary.hpp
-string
--
-vector
 -
 
 /home/twittumz/Desktop/git/BSServer/BSServer/Engine.hpp
@@ -91,22 +77,14 @@ vector
 -
 iostream
 -
+string
+-
 sstream
 -
 
 /home/twittumz/Desktop/git/BSServer/BSServer/Helper.hpp
 stdlib.h
 -
-
-/home/twittumz/Desktop/git/BSServer/BSServer/JSONParser.hpp
-vector
--
-iostream
--
-string
--
-Dictionary.hpp
-/home/twittumz/Desktop/git/BSServer/BSServer/Dictionary.hpp
 
 /home/twittumz/Desktop/git/BSServer/BSServer/main.cpp
 iostream
