@@ -7,12 +7,19 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include "Map.hpp"
 class Engine{
     private:
     BSServer *serv;
+   Map map;
+   
   public:
   Engine(BSServer *server){
       serv=server;
+      if(!map.loadMap("map2")){
+          std::cout<<"Map failed to load\n";
+      }
+      
   }
   
   void run(){
@@ -33,10 +40,12 @@ class Engine{
                       
                   }
                   if(cli->commands_size()>0){
-                      std::string  cmd = cli->popCommand();
+                      CommandMessage lst = cli->popCommand();
+                      std::string cmd = lst.cmd;
+                   //   std::cout<<cmd<<std::endl;
                       std::stringstream id;
                      id<<"id:"<<cli->cli_addr.sin_addr.s_addr<<":"<<cmd;
-                     std::cout<<id.str()<<std::endl;
+                  //   std::cout<<id.str()<<std::endl;
                       serv->broadcastPlayerData(cli->cli_addr,id.str());
                   }
           }

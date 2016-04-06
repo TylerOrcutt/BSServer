@@ -71,7 +71,7 @@ serv=socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);
 if(serv<0){ cout<<"sock error\n"; return;}
 memset(&serv_addr,sizeof serv_addr,0);
 
-port=9899;
+port=9898;
 serv_addr.sin_family=AF_INET;
 serv_addr.sin_addr.s_addr=INADDR_ANY;
 serv_addr.sin_port =htons(port);
@@ -172,7 +172,7 @@ for(int i=0;i<retData.length();i++){
        std::cout<<"Pong Received, Latency:"<<cli->getPongTimeReceived()-cli->getLastPing()<<"\n";
        continue;
   }
-    cout<<ss.str()<<endl;
+  //  cout<<ss.str()<<endl;
    //  sendto(serv, retData.c_str(), strlen(retData.c_str()), 0, (struct sockaddr*) &cli_addr,clilen);
          
   //  broadcastPlayerData(cli_addr, retData);

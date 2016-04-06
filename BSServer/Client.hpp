@@ -3,7 +3,16 @@
 #include <openssl/ssl.h>
 #include <sys/socket.h>
 #include <list>
+#include <vector>
 #include <string>
+struct CommandMessage{
+       CommandMessage(std::string c,unsigned long t){
+           cmd = c;
+           timestamp=t;
+       }
+    std::string cmd;
+    unsigned long timestamp;
+};
 class Client{
   private: 
   //SSL * _ssl;
@@ -17,15 +26,15 @@ class Client{
   unsigned long lastPing = 0;
   unsigned long pingTimeSent=0;
   unsigned long pongTimeReceived=0;
-  std::list<std::string> * commands;
+  std::list<CommandMessage> * commands;
   public:  
   Client(int nsock){
      // _ssl=s;
       socket=nsock;
-      commands = new std::list<std::string>();
+  commands = new std::list<CommandMessage>();
   }  
     Client(){
-          commands = new std::list<std::string>();
+          commands = new std::list<CommandMessage>();
     }
  /* SSL* ssl(){
       return _ssl;
@@ -90,15 +99,18 @@ class Client{
     }
     
     void pushCommand(std::string cmd){
-        commands->push_back(cmd);
+      //  commands->push_back(cmd);
+        CommandMessage  cm(cmd,1);
+        commands->push_back(cm);
+     
         
     }
     int commands_size(){
         return commands->size();
     }
     
-    std::string popCommand(){
-        std::string cmd = commands->front();
+   CommandMessage popCommand(){
+          CommandMessage cmd = commands->front();
         commands->pop_front();
         return cmd;
     }

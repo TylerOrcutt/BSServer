@@ -12,5 +12,6 @@ CMakeFiles/BSServer.dir/main.cpp.o: BSServer.hpp
 CMakeFiles/BSServer.dir/main.cpp.o: Client.hpp
 CMakeFiles/BSServer.dir/main.cpp.o: Engine.hpp
 CMakeFiles/BSServer.dir/main.cpp.o: Helper.hpp
+CMakeFiles/BSServer.dir/main.cpp.o: Map.hpp
 CMakeFiles/BSServer.dir/main.cpp.o: main.cpp
 
