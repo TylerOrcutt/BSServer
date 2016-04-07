@@ -65,6 +65,14 @@ vector
 -
 string
 -
+Helper.hpp
+/home/twittumz/Desktop/git/BSServer/BSServer/Helper.hpp
+
+/home/twittumz/Desktop/git/BSServer/BSServer/Dictionary.hpp
+string
+-
+vector
+-
 
 /home/twittumz/Desktop/git/BSServer/BSServer/Engine.hpp
 unistd.h
@@ -85,10 +93,26 @@ sstream
 -
 Map.hpp
 /home/twittumz/Desktop/git/BSServer/BSServer/Map.hpp
+Dictionary.hpp
+/home/twittumz/Desktop/git/BSServer/BSServer/Dictionary.hpp
+JSONParser.hpp
+/home/twittumz/Desktop/git/BSServer/BSServer/JSONParser.hpp
+math.h
+-
 
 /home/twittumz/Desktop/git/BSServer/BSServer/Helper.hpp
 stdlib.h
 -
+
+/home/twittumz/Desktop/git/BSServer/BSServer/JSONParser.hpp
+vector
+-
+iostream
+-
+string
+-
+Dictionary.hpp
+/home/twittumz/Desktop/git/BSServer/BSServer/Dictionary.hpp
 
 /home/twittumz/Desktop/git/BSServer/BSServer/Map.hpp
 iostream

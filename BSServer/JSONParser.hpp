@@ -18,9 +18,9 @@ static Dictionary * parseJson(std::string data){
      i++;
       for(int k=i;k<data.length()-1 && data.substr(k,1)!="\"" && data.substr(k,1)!="}";k++ ){i=k;}
       //value pair
-      i++;
+      //i++;
       if(data.substr(i,1)=="\""){
-      //  std::cout<<"value pair\n";
+     //    std::cout<<"value pair\n";
           n.value = getValue(data,i+1);
           i+=n.value.length();
             for(int k=i;k<data.length() && data.substr(k,1)==",";k++){i=k;}
@@ -28,7 +28,7 @@ static Dictionary * parseJson(std::string data){
       }
         if(data.substr(i,1)=="{"){
           i++;
-      //    std::cout<<"array pair\n";
+  ///      std::cout<<"array pair\n";
         n.items=  getSubItems(data, &i);
           }
              a->push_back(n);

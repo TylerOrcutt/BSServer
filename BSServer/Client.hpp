@@ -5,6 +5,7 @@
 #include <list>
 #include <vector>
 #include <string>
+#include "Helper.hpp"
 struct CommandMessage{
        CommandMessage(std::string c,unsigned long t){
            cmd = c;
@@ -22,6 +23,7 @@ class Client{
   int packet_sequence=0;
   float x=0,y=0;
   double angle=0;
+  bool moving =false;
   unsigned long lastResponce = 0;
   unsigned long lastPing = 0;
   unsigned long pingTimeSent=0;
@@ -45,6 +47,18 @@ class Client{
     void move(float _x,float _y){
         x=_x;
         y=_y;
+    }
+    void setX(float _x){
+        x=_x;
+    }
+    void setY(float _x){
+        y=_x;
+    }
+    void setMoving(bool mv){
+        moving=mv;
+    }
+    bool isMoving(){
+        return moving;
     }
     void setAngle(double _angle){
         angle=_angle;
@@ -100,7 +114,7 @@ class Client{
     
     void pushCommand(std::string cmd){
       //  commands->push_back(cmd);
-        CommandMessage  cm(cmd,1);
+        CommandMessage  cm(cmd,Helper::getTime()-(getPongTimeReceived()-getLastPing()));
         commands->push_back(cm);
      
         

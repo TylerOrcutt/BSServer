@@ -63,7 +63,7 @@ void push_back(DictionaryItem n){
   nodes.push_back(n);
 }
 
-void printDictionay(){
+void printDictionary(){
 for(int i=0;i<nodes.size();i++){
   std::cout<<"key : "<<nodes[i].key<<std::endl;
   std::cout<<"value : "<<nodes[i].value<<std::endl;

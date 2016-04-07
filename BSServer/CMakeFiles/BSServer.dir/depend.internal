@@ -11,7 +11,9 @@ CMakeFiles/BSServer.dir/DataHandle.cpp.o
 CMakeFiles/BSServer.dir/main.cpp.o
  /home/twittumz/Desktop/git/BSServer/BSServer/BSServer.hpp
  /home/twittumz/Desktop/git/BSServer/BSServer/Client.hpp
+ /home/twittumz/Desktop/git/BSServer/BSServer/Dictionary.hpp
  /home/twittumz/Desktop/git/BSServer/BSServer/Engine.hpp
  /home/twittumz/Desktop/git/BSServer/BSServer/Helper.hpp
+ /home/twittumz/Desktop/git/BSServer/BSServer/JSONParser.hpp
  /home/twittumz/Desktop/git/BSServer/BSServer/Map.hpp
  /home/twittumz/Desktop/git/BSServer/BSServer/main.cpp
