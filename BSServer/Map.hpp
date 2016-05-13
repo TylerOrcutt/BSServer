@@ -28,6 +28,13 @@ class Map{
            if(line.substr(i,5)=="posy="){
                blk.y = atof(getValue(line,i+5).c_str())*mapScaleY;
                }
+              if(line.substr(i,8)=="blocked="){
+                  std::string v = getValue(line,i+8);
+                  if(v=="false"){
+                    //  std::cout<<"blocked\n";
+                      blk.blocked=false;
+                  }
+              }
        }
       Blocks.push_back(blk);
    
@@ -63,8 +70,9 @@ class Map{
     bool checkCollision(float x,float y, float width,float height){
         
           for(int i=0;i<Blocks.size();i++){
+              if(!Blocks[i].blocked){ continue;}
          if(x+width>=Blocks[i].x && x<= Blocks[i].x+Blocks[i].width 
-           && y+height >=Blocks[i].y && y<=Blocks[i].y+Blocks[i].width){
+           && y+height >=Blocks[i].y && y<=Blocks[i].y+Blocks[i].height){
                return true;
            }
        }

@@ -51,6 +51,8 @@ Client.hpp
 /home/twittumz/Desktop/git/BSServer/BSServer/Client.hpp
 Helper.hpp
 /home/twittumz/Desktop/git/BSServer/BSServer/Helper.hpp
+mutex
+-
 
 /home/twittumz/Desktop/git/BSServer/BSServer/Client.hpp
 iostream
@@ -98,6 +100,10 @@ Dictionary.hpp
 JSONParser.hpp
 /home/twittumz/Desktop/git/BSServer/BSServer/JSONParser.hpp
 math.h
+-
+mutex
+-
+thread
 -
 
 /home/twittumz/Desktop/git/BSServer/BSServer/Helper.hpp

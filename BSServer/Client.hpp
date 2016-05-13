@@ -28,6 +28,8 @@ class Client{
   unsigned long lastPing = 0;
   unsigned long pingTimeSent=0;
   unsigned long pongTimeReceived=0;
+  
+  unsigned long lastUpdate=0;
   std::list<CommandMessage> * commands;
   public:  
   Client(int nsock){
@@ -107,6 +109,14 @@ class Client{
 
        unsigned long getPongTimeReceived(){
         return pongTimeReceived;
+    }
+    
+        void setLastUpdate(unsigned long rp){
+        lastUpdate=rp;
+    }
+
+       unsigned long getLastUpdate(){
+        return lastUpdate;
     }
     void setPongTimeReceived(unsigned long rp){
         pongTimeReceived=rp;

@@ -26,7 +26,7 @@
 
 #include "Client.hpp"
 #include "Helper.hpp"
-
+#include <mutex>  
 using namespace std;
 class BSServer{
  private:
@@ -50,6 +50,7 @@ BSServer(){
  InitServerCTX();
  LoadCertificates( "BS_ALPHA_CERT.pem", "BS_ALPHA_CERT.pem");
  clients= new vector<Client*>();
+
 }
 
 /* *** Function definations */
@@ -96,6 +97,9 @@ while(true){
     int bytes=0;
      char buffer[512];
     if((bytes=recvfrom(serv,buffer,sizeof(buffer),0,(struct sockaddr*)&cli_addr,&clilen))<=0){
+        continue;
+    }
+    if(cli_addr.sin_addr.s_addr==0){
         continue;
     }
     
