@@ -1,1 +1,3 @@
+/home/twittumz/Desktop/git/BSServer/BSServer/CMakeFiles/edit_cache.dir
+/home/twittumz/Desktop/git/BSServer/BSServer/CMakeFiles/rebuild_cache.dir
 /home/twittumz/Desktop/git/BSServer/BSServer/CMakeFiles/BSServer.dir

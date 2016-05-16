@@ -1,1 +1,1 @@
-/usr/bin/c++    -std=gnu++0x    CMakeFiles/BSServer.dir/main.cpp.o CMakeFiles/BSServer.dir/DataHandle.cpp.o  -o BSServer -rdynamic -lpthread -lssl -lcrypto 
+/usr/bin/c++    -std=gnu++0x   CMakeFiles/BSServer.dir/main.cpp.o CMakeFiles/BSServer.dir/DataHandle.cpp.o  -o BSServer -rdynamic -lpthread -lssl -lcrypto 

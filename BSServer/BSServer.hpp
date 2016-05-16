@@ -26,11 +26,14 @@
 
 #include "Client.hpp"
 #include "Helper.hpp"
+#include "Config.hpp"
+#include "HttpRequest.hpp"
 #include <mutex>  
 using namespace std;
 class BSServer{
  private:
   
+  configuration  * config;
   
    int serv,port;
   socklen_t clilen;
@@ -47,9 +50,14 @@ int fdmax;
  std::string map = "map2";
  public:  
 BSServer(){
- InitServerCTX();
- LoadCertificates( "BS_ALPHA_CERT.pem", "BS_ALPHA_CERT.pem");
+ //InitServerCTX();
+// LoadCertificates( "BS_ALPHA_CERT.pem", "BS_ALPHA_CERT.pem");
+
  clients= new vector<Client*>();
+ config =Config::LoadConfig();
+ std::string paramstr = Config::genParamString(config);
+ std::cout<<paramstr<<std::endl;
+HTTPRequest::HTTPPostRequest("rustednail.ddns.net","updateserver",paramstr);
 
 }
 
@@ -397,7 +405,7 @@ void LoadCertificates( char* CertFile, char* KeyFile){
 }
 void InitServerCTX()
 {
-  SSL_library_init();
+ /* SSL_library_init();
     OpenSSL_add_all_algorithms();
     SSL_load_error_strings();
     const SSL_METHOD * meth = SSLv3_server_method();
@@ -405,7 +413,7 @@ void InitServerCTX()
    if ( ctx == NULL ) {
      ERR_print_errors_fp(stderr);
        abort();
-    }
+    }*/
 
 }
 

@@ -51,6 +51,10 @@ Client.hpp
 /home/twittumz/Desktop/git/BSServer/BSServer/Client.hpp
 Helper.hpp
 /home/twittumz/Desktop/git/BSServer/BSServer/Helper.hpp
+Config.hpp
+/home/twittumz/Desktop/git/BSServer/BSServer/Config.hpp
+HttpRequest.hpp
+/home/twittumz/Desktop/git/BSServer/BSServer/HttpRequest.hpp
 mutex
 -
 
@@ -69,6 +73,30 @@ string
 -
 Helper.hpp
 /home/twittumz/Desktop/git/BSServer/BSServer/Helper.hpp
+
+/home/twittumz/Desktop/git/BSServer/BSServer/Config.hpp
+string
+-
+vector
+-
+iostream
+-
+fstream
+-
+sstream
+-
+
+/home/twittumz/Desktop/git/BSServer/BSServer/DataHandle.cpp
+BSServer.hpp
+/home/twittumz/Desktop/git/BSServer/BSServer/BSServer.hpp
+JSONParser.hpp
+/home/twittumz/Desktop/git/BSServer/BSServer/JSONParser.hpp
+string
+-
+thread
+-
+future
+-
 
 /home/twittumz/Desktop/git/BSServer/BSServer/Dictionary.hpp
 string
@@ -108,6 +136,22 @@ thread
 
 /home/twittumz/Desktop/git/BSServer/BSServer/Helper.hpp
 stdlib.h
+-
+
+/home/twittumz/Desktop/git/BSServer/BSServer/HttpRequest.hpp
+string
+-
+iostream
+-
+sys/types.h
+-
+sys/socket.h
+-
+netdb.h
+-
+netinet/in.h
+-
+sstream
 -
 
 /home/twittumz/Desktop/git/BSServer/BSServer/JSONParser.hpp
