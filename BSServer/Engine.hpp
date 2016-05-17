@@ -28,7 +28,7 @@ class Engine{
   }
   
   void run(){
-      while(true){
+      while(serv->isRunning()){
     
           std::vector<Client*>*clients= serv->getClients();
 

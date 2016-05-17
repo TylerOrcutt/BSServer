@@ -15,6 +15,7 @@ int main(){
     std::thread t(&engineThread,serv);
  
       serv->start();
+      t.join();
  
     return 0;
 }

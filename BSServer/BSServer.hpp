@@ -35,11 +35,12 @@ class BSServer{
   
   configuration  * config;
   
-   int serv,port;
+   int serv;//port;
   socklen_t clilen;
   struct sockaddr_in serv_addr, cli_addr;
     struct sockaddr_in serv_addr_out;
   SSL_CTX *ctx;
+  bool running=true;
 
   fd_set master;
 fd_set read_fds;
@@ -56,9 +57,12 @@ BSServer(){
  clients= new vector<Client*>();
  config =Config::LoadConfig();
  std::string paramstr = Config::genParamString(config);
- std::cout<<paramstr<<std::endl;
-HTTPRequest::HTTPPostRequest("rustednail.ddns.net","updateserver",paramstr);
-
+ //std::cout<<paramstr<<std::endl;
+std::string responce=HTTPRequest::HTTPPostRequest("rustednail.ddns.net","updateserver",paramstr);
+if(responce.substr(0,12)=="unauthorized" || responce==""){
+    std::cout<<"Exiting.\n";
+    running=false;
+}
 }
 
 /* *** Function definations */
@@ -81,15 +85,17 @@ serv=socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);
 if(serv<0){ cout<<"sock error\n"; return;}
 memset(&serv_addr,sizeof serv_addr,0);
 
-port=9898;
+//port=9899;
 serv_addr.sin_family=AF_INET;
 serv_addr.sin_addr.s_addr=INADDR_ANY;
-serv_addr.sin_port =htons(port);
+serv_addr.sin_port =htons(config->port);
 
 
 
 if(bind(serv,(struct sockaddr*)&serv_addr,sizeof serv_addr)<0){
-  cout<<"error binding\n"; return;
+  cout<<"error binding\n"; 
+  running=false;
+  return;
   }
   
   //set to non blocking socket
@@ -100,7 +106,7 @@ if(bind(serv,(struct sockaddr*)&serv_addr,sizeof serv_addr)<0){
      return;
  }*/
 
-while(true){
+while(running){
    //usleep(1000);
     int bytes=0;
      char buffer[512];
@@ -133,7 +139,8 @@ Client *cli;
 
 if((cli = getClient(cli_addr))==nullptr){
 
-    if(clients->size()>= MAX_CLIENTS){
+    if(clients->size()>= config->max_clients){
+        //need to report this back to the client trying to connect
         continue;//server is already at max capacity
     }
  std::cout<< "new connection from "<< cli_addr.sin_addr.s_addr<<std::endl;
@@ -254,6 +261,12 @@ void sendData(std::string data, sockaddr_in addr, socklen_t alen){
 }
 std::vector<Client*> * getClients(){
     return clients;
+}
+void setRunning(bool run){
+    running=run;
+}
+bool isRunning(){
+    return running;
 }
 /*serv=socket(AF_INET,SOCK_STREAM,0);
 if(serv<0){ cout<<"sock error\n"; return;}

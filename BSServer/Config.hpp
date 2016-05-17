@@ -11,6 +11,8 @@ struct configuration{
     std::string ServerName;
     std::string ip;
     int port = 9898;
+    std::string user;
+    std::string passwd;
    
    
     
@@ -29,10 +31,12 @@ class Config{
         //defaults 
         std::cout<<"Failed to load config file, using defaults.\n";
         configuration * config = new configuration;
-        config->max_clients = 10;
-        config->ServerName= "Default BS";
-        config->ip="rustnail.dds.net";
+        config->max_clients = 300;
+        config->ServerName= "Dev";
+        config->ip="rustnail.ddns.net";
         config->port=9898;
+        config->user="twittumz";
+        config->passwd="asd";
          
         
         return config;
@@ -43,7 +47,8 @@ class Config{
         ss<<"&ServerName="<<config->ServerName;
         ss<<"&IP="<<config->ip;
         ss<<"&port="<<config->port;
-        
+        ss<<"&username="<<config->user;
+        ss<<"&passwd="<<config->passwd;
         return ss.str();
     }
     
