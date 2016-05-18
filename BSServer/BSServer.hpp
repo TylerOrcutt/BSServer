@@ -249,7 +249,7 @@ int getClientId(sockaddr_in addr){
 }
 void sendIdentity(sockaddr_in addr, socklen_t addrlen){
     std::stringstream json;
-    json<<"{\"identity\":{\"Map\":\""<<map<<"\",\"players\":\""<<clients->size()<<"\",\"maxplayers\":\""<<MAX_CLIENTS<<"\"}}";
+    json<<"{\"identity\":{\"Map\":\""<<map<<"\",\"players\":\""<<clients->size()<<"\",\"maxplayers\":\""<<config->max_clients<<"\"}}";
     sendData(json.str(),addr,addrlen);
     
     

@@ -121,7 +121,9 @@ class Client{
     void setPongTimeReceived(unsigned long rp){
         pongTimeReceived=rp;
     }
-    
+    int getLatency(){
+        return  getPongTimeReceived()-getLastPing();
+    }
     void pushCommand(std::string cmd){
       //  commands->push_back(cmd);
         CommandMessage  cm(cmd,Helper::getTime()-(getPongTimeReceived()-getLastPing()));
