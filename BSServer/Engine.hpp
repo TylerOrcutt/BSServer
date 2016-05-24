@@ -29,13 +29,13 @@ class Engine{
   
   void run(){
       while(serv->isRunning()){
-    
+      mtx.lock();
           std::vector<Client*>*clients= serv->getClients();
-
+  mtx.unlock();
           for(int i=0;i<clients->size();i++){
-        mtx.lock();
+           mtx.lock();
               Client* cli = (*clients)[i];
-               
+            
                         float x=cli->getX(),y=cli->getY(),angle=cli->getAngle();
                         
                        bool moving =cli->isMoving();
@@ -75,41 +75,48 @@ class Engine{
                           if(player->getItem("angle")!=nullptr){
                              angle=atof(player->getItem("angle")->value.c_str());                          
                          mtx.lock();
-                         cli->setAngle(angle);
+                       //  cli->setAngle(angle);
                           mtx.unlock();
                        }
             
                       if(player->getItem("moving")!=nullptr){
                     
-                       moving=false;
+                     //  moving=false;
                        mtx.lock();
-                       cli->move(x,y);
-                   
-                        cli->setLastUpdate(Helper::getTime()-cli->getLatency());
+                       //cli->move(x,y);
+                   std::cout<<i<<"  STOPPED:  X:"<<x<<"  Y:"<<y<<"  Angle:"<<angle<<std::endl;
+                      
+                
+                       // cli->setLastUpdate(Helper::getTimeNano());
                       cli->setMoving(false);
+                //     cli->setLastUpdate(Helper::getTime());
+              
                    mtx.unlock(); 
                        std::cout<<i<<" STOPED MOVING\n";
-                                  
-                 std::cout<<"X:"<<x<<"  Y:"<<y<<"  Angle:"<<angle<<std::endl;
-                    
+               std::cout<<"X:"<<x<<"  Y:"<<y<<"  Angle:"<<angle<<std::endl;
+                //    continue;
                       }else{
                           if(!moving){
                        std::cout<<i<<" Started MOVING\n";
                        mtx.lock();
-                       cli->setX(x);
-                       cli->setY(y);
-                       cli->setAngle(angle);
-                          cli->setLastUpdate(Helper::getTime()-cli->getLatency());
+                       cli->move(x,y);
+                         std::cout<<i<<"  STARTED:  X:"<<x<<"  Y:"<<y<<"  Angle:"<<cli->getAngle()<<std::endl;
+                      
+                
+                        cli->setAngle(angle);
+                          cli->setLastUpdate(Helper::getTime()-((cli->getLatency()/2)));
+                        cli->setMoving(true);
                        mtx.unlock();
+                   
                           }
                           moving=true;
-                          cli->setMoving(true);
+                        //  cli->setMoving(true);
                           
                            
                       }
                       
                    
-                       cli->setAngle(angle);
+                   ///    cli->setAngle(angle);
                           
                     
                        }
@@ -136,13 +143,24 @@ class Engine{
                    
                      mtx.lock();
                             unsigned long ct=  Helper::getTime();
-                   double dt = (double)(ct-cli->getLastUpdate());
-                     dt/=10;
-                       angle = cli->getAngle();
-                     float cx = cli->getX()+ (float)cos(angle)*(dt*4);
-                     float cy = cli->getY()+(float)sin(angle)*(dt*4);
+                            if(!cli->isMoving() || angle!=cli->getAngle()){
+                                ct-=(cli->getLatency()/2);
+                             
+                            }else{
+                                
+                            }
+                       
+                         long dt =  (ct-cli->getLastUpdate());
+                  
+               
+                 //    std::cout<<dt<<"\n";
                      
-                       cli->setLastUpdate(ct);
+                  //     angle = cli->getAngle();
+                     float cx = cli->getX()+ (((float)cos(cli->getAngle()))*(dt*0.5f));
+                     float cy = cli->getY()+(((float)sin(cli->getAngle()))*(dt*0.5f));
+                    //   cli->setLastUpdate(ct);
+                    cli->setAngle(angle);
+                      cli->setLastUpdate(ct);
                     if(map.checkCollision(cx,cy,64,64)){
                         std::cout<<"COLLISION\n";
                    
@@ -152,7 +170,7 @@ class Engine{
                       }
                      mtx.unlock();
                    std::cout.precision(9);
-                  std::cout<<i<<"  Caculated X:"<<cx<<"  Y:"<<cy<<"  Angle:"<<angle<<std::endl;
+               std::cout<<i<<"  Caculated X:"<<cx<<"  Y:"<<cy<<"  Angle:"<<angle<<std::endl;
                       
                 
                  
@@ -165,7 +183,7 @@ class Engine{
                
           }
        
-         usleep(1000);
+         usleep(100);
           
       }
   }

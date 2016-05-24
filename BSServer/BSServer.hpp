@@ -32,7 +32,7 @@
 using namespace std;
 class BSServer{
  private:
-  
+     std::mutex mtx;  
   configuration  * config;
   
    int serv;//port;
@@ -147,8 +147,9 @@ if((cli = getClient(cli_addr))==nullptr){
     Client *client = new Client();
     client->cli_addr =  cli_addr;
     client->clilen = clilen;
-   
+      mtx.lock();
     clients->push_back(client);
+       mtx.unlock();
     cli = client;
     std::stringstream idjson ;
     idjson<< "{\"id\":\""<<cli_addr.sin_addr.s_addr<<"\"}";
@@ -181,22 +182,27 @@ for(int i=0;i<retData.length();i++){
         std::cout<<"Received disconnect\n";
         int cli_id=-1;
         if((cli_id=getClientId(cli_addr))>=0){
+               mtx.lock();
          clients->erase(clients->begin()+cli_id);
+            mtx.unlock();
         std::cout<<"Client "<<cli_id<<" sent dc\n";
         }
            continue;
     }
   if(retData=="Pong"){
-      
+         mtx.lock();
        cli->setPongTimeReceived(Helper::getTime());
-       std::cout<<"Pong Received, Latency:"<<cli->getPongTimeReceived()-cli->getLastPing()<<"\n";
+       std::cout<<"Pong Received, Latency:"<<cli->getPongTimeReceived()-cli->getLastPing()<<"     Average:"<<cli->getAverageLatency()<<"\n";
+          mtx.unlock();
        continue;
   }
   //  cout<<ss.str()<<endl;
    //  sendto(serv, retData.c_str(), strlen(retData.c_str()), 0, (struct sockaddr*) &cli_addr,clilen);
          
   //  broadcastPlayerData(cli_addr, retData);
+     mtx.lock();
   cli->pushCommand(retData);
+     mtx.unlock();
     
 }//
 close(serv);

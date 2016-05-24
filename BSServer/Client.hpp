@@ -28,6 +28,8 @@ class Client{
   unsigned long lastPing = 0;
   unsigned long pingTimeSent=0;
   unsigned long pongTimeReceived=0;
+  unsigned long pingsSent=0;
+  unsigned long totalPing=0;
   
   unsigned long lastUpdate=0;
   std::list<CommandMessage> * commands;
@@ -120,9 +122,14 @@ class Client{
     }
     void setPongTimeReceived(unsigned long rp){
         pongTimeReceived=rp;
+       totalPing+= getPongTimeReceived()-getLastPing();
+       pingsSent++;
     }
     int getLatency(){
-        return  getPongTimeReceived()-getLastPing();
+        return getPongTimeReceived()-getLastPing();
+    }
+     int getAverageLatency(){
+        return (pingsSent>0)? totalPing/pingsSent:0;
     }
     void pushCommand(std::string cmd){
       //  commands->push_back(cmd);
