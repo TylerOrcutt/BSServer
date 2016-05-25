@@ -19,5 +19,6 @@ CMakeFiles/BSServer.dir/main.cpp.o: Helper.hpp
 CMakeFiles/BSServer.dir/main.cpp.o: HttpRequest.hpp
 CMakeFiles/BSServer.dir/main.cpp.o: JSONParser.hpp
 CMakeFiles/BSServer.dir/main.cpp.o: Map.hpp
+CMakeFiles/BSServer.dir/main.cpp.o: Projectile.hpp
 CMakeFiles/BSServer.dir/main.cpp.o: main.cpp
 

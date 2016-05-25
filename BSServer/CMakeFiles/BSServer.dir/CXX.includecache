@@ -133,9 +133,15 @@ mutex
 -
 thread
 -
+Projectile.hpp
+/home/twittumz/Desktop/git/BSServer/BSServer/Projectile.hpp
 
 /home/twittumz/Desktop/git/BSServer/BSServer/Helper.hpp
 stdlib.h
+-
+limits.h
+-
+iostream
 -
 
 /home/twittumz/Desktop/git/BSServer/BSServer/HttpRequest.hpp
@@ -173,6 +179,10 @@ fstream
 -
 vector
 -
+
+/home/twittumz/Desktop/git/BSServer/BSServer/Projectile.hpp
+Client.hpp
+/home/twittumz/Desktop/git/BSServer/BSServer/Client.hpp
 
 /home/twittumz/Desktop/git/BSServer/BSServer/main.cpp
 iostream

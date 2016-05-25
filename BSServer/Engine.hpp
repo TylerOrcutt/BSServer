@@ -13,11 +13,13 @@
 #include <math.h>
 #include <mutex>  
 #include <thread>
+#include "Projectile.hpp"
 class Engine{
     private:
     BSServer *serv;
    Map map;
    std::mutex mtx;  
+   std::list<Projectile> projectiles;
   public:
   Engine(BSServer *server){
       serv=server;
@@ -90,10 +92,11 @@ class Engine{
                        // cli->setLastUpdate(Helper::getTimeNano());
                       cli->setMoving(false);
                 //     cli->setLastUpdate(Helper::getTime());
-              
+         
                    mtx.unlock(); 
                        std::cout<<i<<" STOPED MOVING\n";
                std::cout<<"X:"<<x<<"  Y:"<<y<<"  Angle:"<<angle<<std::endl;
+               
                 //    continue;
                       }else{
                           if(!moving){
@@ -120,13 +123,28 @@ class Engine{
                           
                     
                        }
-         
+                       
+                    //check for projectile data   
+             
+                     if((player=data->getItem("Projectile"))!=nullptr){
+                               if(player->getItem("angle")!=nullptr){
+                               float projectileAngle=atof(player->getItem("angle")->value.c_str());    
+                               mtx.lock();
+                               Projectile prj(cli->getX()+32, cli->getY()+32,projectileAngle);
+                               prj.setLastUpdate(Helper::getTime()- (cli->getLatency()/2));
+                               prj.setOwner(cli);
+                               mtx.unlock();
+                               projectiles.push_back(prj);
+                               std::cout<<"Added Projectile\n";
+                                     
+                       }
+                     }
                     
-                             std::stringstream id;
+                           std::stringstream id;
                      id<<"id:"<<cli->cli_addr.sin_addr.s_addr<<":"<<cmd;
                   //   std::cout<<id.str()<<std::endl;
                       serv->broadcastPlayerData(cli->cli_addr,id.str());
-                     // delete player;
+                     
                        
                        
                        delete data;
@@ -150,7 +168,7 @@ class Engine{
                                 
                             }
                        
-                         long dt =  (ct-cli->getLastUpdate());
+                          long dt =  (ct-cli->getLastUpdate());
                   
                
                  //    std::cout<<dt<<"\n";
@@ -163,25 +181,72 @@ class Engine{
                       cli->setLastUpdate(ct);
                     if(map.checkCollision(cx,cy,64,64)){
                         std::cout<<"COLLISION\n";
-                   
+                       cli->setMoving(false);
                       
                       }else{
                       cli->move(cx,cy);
                       }
-                     mtx.unlock();
-                   std::cout.precision(9);
-               std::cout<<i<<"  Caculated X:"<<cx<<"  Y:"<<cy<<"  Angle:"<<angle<<std::endl;
-                      
                 
+                   std::cout.precision(9);
+             //  std::cout<<i<<"  Caculated X:"<<cx<<"  Y:"<<cy<<"  Angle:"<<angle<<std::endl;
+               
                  
                       
-                    
+                         mtx.unlock();
                 
                   }
        
                
                
           }
+          
+          //update projectiles
+      //    std::cout<<projectiles.size()<<"\n";
+          for(auto projectile = projectiles.begin();projectile!=projectiles.end();projectile++){
+              Projectile prj = *projectile;
+                unsigned long ct=  Helper::getTime();
+                    long dt =  (ct-prj.getLastUpdate());
+            
+                  float cx = prj.getX()+ (((float)cos(prj.getAngle()))*(dt*prj.getSpeed()));
+                  float cy = prj.getY()+(((float)sin(prj.getAngle()))*(dt*prj.getSpeed()));
+                  prj.setTimeAlive(prj.getTimeAlive()-(float)(dt/100.f));
+                      prj.move(cx,cy);
+                   prj.setLastUpdate(ct);
+                  if(prj.getTimeAlive()<=0){
+                       std::cout<<"Projectile REMOVED - TIMEOUT\n";
+                        projectiles.erase(projectile);
+                        projectile--;
+                        continue;
+                  }
+              //check collision
+             
+                    if(map.checkCollision(cx,cy,20,20)){
+                        std::cout<<"Projectile Map collision\n";
+                        projectiles.erase(projectile);
+                        projectile--;
+                      //  std::cout<<"Removed PRojectile\n";
+                    }
+                    mtx.lock();
+                          std::vector<Client*>*clients= serv->getClients();
+                  for(int i=0;i<clients->size();i++){
+                          Client * cli = (*clients)[i];
+                        if(prj.getOwner() == cli){
+                            continue;
+                        }
+                      
+                       if(prj.getX()+20>=cli->getX() && prj.getX()<= cli->getX()+64 
+                       && prj.getY()+20 >=cli->getY() && prj.getY()<=cli->getY()+64){
+                      
+                         //kill player
+                         std::cout<<i<<" was killed\n";
+                                 projectiles.erase(projectile);
+                                   projectile--;
+                          }
+                    }
+                    mtx.unlock();
+              
+          }
+          
        
          usleep(100);
           
