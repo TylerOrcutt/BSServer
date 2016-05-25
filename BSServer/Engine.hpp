@@ -241,6 +241,15 @@ class Engine{
                          std::cout<<i<<" was killed\n";
                                  projectiles.erase(projectile);
                                    projectile--;
+                      std::stringstream id;
+                      id<<"id:"<<cli->cli_addr.sin_addr.s_addr<<":"<<"{\"Player\":{\"dead\":\"true\"}}\n\n";
+                  //   std::cout<<id.str()<<std::endl;
+                      serv->broadcastPlayerData(cli->cli_addr,id.str());
+                            std::stringstream idd;
+                      idd<<"{\"me\":{\"dead\":\"true\"}}\n\n";
+                  //   std::cout<<id.str()<<std::endl;
+                      serv->sendPlayerData(cli,idd.str());
+                      
                           }
                     }
                     mtx.unlock();

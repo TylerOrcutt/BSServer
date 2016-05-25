@@ -215,7 +215,15 @@ bool cliExist(sockaddr_in addr){
  }
     return false;
 }
-
+void sendPlayerData(Client *cli, std::string data){
+     //  struct sockaddr_in cli = cli->cli_addr;
+        cli->incPackets_sent();
+       std::stringstream id;
+       id<< cli->getPacketsSent()<<":";
+     //  data = id.str() + data;
+       sendto(serv, data.c_str(), strlen(data.c_str()), 0, (struct sockaddr*) &cli->cli_addr,cli->clilen);
+         
+}
 
 void broadcastPlayerData(sockaddr_in addr, std::string data){
         for(int i=0;i<clients->size();i++){
