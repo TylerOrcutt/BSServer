@@ -32,7 +32,7 @@ class Config{
         std::cout<<"Failed to load config file, using defaults.\n";
         configuration * config = new configuration;
         config->max_clients = 300;
-        config->ServerName= "Develop - internal";
+        config->ServerName= "Development";
         config->ip="10.0.0.3";
         config->port=9898;
         config->user="twittumz";

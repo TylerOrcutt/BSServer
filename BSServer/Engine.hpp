@@ -140,11 +140,12 @@ class Engine{
                        }
                      }
                     
+               
                            std::stringstream id;
-                     id<<"id:"<<cli->cli_addr.sin_addr.s_addr<<":"<<cmd;
+                     id<<"id:"<<cli->cli_addr.sin_addr.s_addr<<":"<<cmd.substr(0,cmd.length()-2)<<",\"latency\":\"%L\"}}\n\n";
                   //   std::cout<<id.str()<<std::endl;
-                      serv->broadcastPlayerData(cli->cli_addr,id.str());
-                     
+                      serv->broadcastPlayerData(cli,id.str());
+                    
                        
                        
                        delete data;

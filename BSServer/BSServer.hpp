@@ -242,6 +242,33 @@ void broadcastPlayerData(sockaddr_in addr, std::string data){
  }
 }
 
+
+void broadcastPlayerData(Client*cli, std::string data){
+                        mtx.lock();
+        for(int i=0;i<clients->size();i++){
+     if((cli->cli_addr.sin_addr.s_addr != (*clients)[i]->cli_addr.sin_addr.s_addr) ){
+       
+           
+       //   cli.sin_port =htons(port+1);
+      (*clients)[i]->incPackets_sent();
+       std::stringstream id;
+       id<<(*clients)[i]->getPacketsSent()<<":";
+     //  data = id.str() + data;
+           for(int s =0;s<data.length();s++){
+               if(data.substr(s,2)=="%L"){
+                   //replace with latency
+                   std:stringstream lat;
+                   lat<<(cli->getLatency()/2) + ((*clients)[i]->getLatency()/2);
+                    data.replace(s,2,lat.str());
+               }
+           }
+         sendto(serv, data.c_str(), strlen(data.c_str()), 0, (struct sockaddr*) &(*clients)[i]->cli_addr,(*clients)[i]->clilen);
+         
+     }
+ }
+                     mtx.unlock();
+}
+
 Client * getClient(sockaddr_in addr){     
     for(int i=0;i<clients->size();i++){
       if((addr.sin_addr.s_addr == (*clients)[i]->cli_addr.sin_addr.s_addr) ){
