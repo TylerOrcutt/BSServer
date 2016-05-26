@@ -31,8 +31,19 @@ class Client{
   unsigned long pingsSent=0;
   unsigned long totalPing=0;
   
+  
+  bool dead=false;
+  float deathCounter=0.f;
+  float respawnTime=19.f;
+  unsigned long lastDeathUpdate = 0;
+  
+  float kills=0;
+  float deaths=0;
+  
+  
   unsigned long lastUpdate=0;
   std::list<CommandMessage> * commands;
+  std::string playerName="player";
   public:  
   Client(int nsock){
      // _ssl=s;
@@ -146,6 +157,61 @@ class Client{
           CommandMessage cmd = commands->front();
         commands->pop_front();
         return cmd;
+    }
+    
+    std::string getName(){
+        return playerName;
+    }
+    void setName(std::string name){
+        playerName=name;
+    }
+    void kill(){
+        dead=true;
+          deathCounter=respawnTime;
+          lastDeathUpdate= Helper::getTime();
+    }
+    void setDead(bool _dead){
+        dead=_dead;
+        if(dead){
+            deathCounter=respawnTime;
+            lastDeathUpdate= Helper::getTime();
+        }
+    }
+    unsigned long getLastDeathUpdate(){
+        return   lastDeathUpdate;
+    }
+    void setLastDeathUpdate(unsigned long t){
+        lastDeathUpdate=t;
+    }
+    //returns true if its time for the player to respawn
+    bool updateDeathCunter(){
+        unsigned long ct = Helper::getTime();
+        long dt =  (ct-lastDeathUpdate);
+          deathCounter-=  (float)(dt/1000.f);
+          lastDeathUpdate=ct;
+         
+         
+          if(deathCounter<=0){
+              //respawn;
+               dead=false;
+              deathCounter=0;
+              return true;
+           }
+           return false;
+    }
+    bool isDead(){
+        return dead;
+    }
+    void respawn(float _x, float _y){
+        move(_x,_y);
+        dead=false;
+        deathCounter=0.f;
+    }
+    void incDeaths(){
+        deaths++;
+    }
+    void incKills(){
+        kills++;
     }
     socklen_t clilen;
   struct sockaddr_in  cli_addr;

@@ -10,6 +10,7 @@ struct Block{
     bool blocked=true;
     float width=64;
     float height=64;
+    bool isSpawn=false;
   };
 
 class Map{
@@ -17,6 +18,7 @@ class Map{
     int mapScaleY=2;
     private:
     std::vector<Block>Blocks;
+    std::vector<Block> spawnPoints;
     
     
    void handleLine(std::string line){
@@ -35,8 +37,19 @@ class Map{
                       blk.blocked=false;
                   }
               }
+              
+                  if(line.substr(i,11)=="spawnPoint="){
+                  std::string v = getValue(line,i+11);
+                  if(v=="true"){
+                    //  std::cout<<"blocked\n";
+                      blk.isSpawn=true;
+                  }
+              }
        }
       Blocks.push_back(blk);
+      if(blk.isSpawn){
+          spawnPoints.push_back(blk);
+      }
    
    }
    std::string getValue(std::string line,int x){
@@ -79,5 +92,9 @@ class Map{
         return false;
     }
     
+    Block *getSpawnPoint(){
+        
+        return (spawnPoints.size()>0)? &spawnPoints[0]:nullptr;
+    }
     
 };

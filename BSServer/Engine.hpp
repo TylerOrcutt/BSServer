@@ -154,7 +154,7 @@ class Engine{
                   //    std::cout<<i<<"  Player X:"<<cli->getX()<<"  Y:"<<cli->getY()<<"  Angle:"<<angle<<std::endl;
                       
                  
-                      if(moving ){
+                      if(moving && !cli->isDead()){
                       //    std::cout<<"PLAYER IS MOVING\n";
                
                  //    std::cout<<dt<<std::endl;
@@ -195,7 +195,29 @@ class Engine{
                          mtx.unlock();
                 
                   }
-       
+                   mtx.lock();
+                   if(cli->isDead()){
+                       if(cli->updateDeathCunter()){
+                           //respawn
+                           Block * blk =map.getSpawnPoint();
+                           cli->move(blk->x,blk->y);
+                           //send respawn data
+                           
+                       std::stringstream id;
+                      id<<"id:"<<cli->cli_addr.sin_addr.s_addr<<":"<<"{\"Player\":{\"respawn\":\"true\",\"x\":\""
+                      <<cli->getX()<<"\",\"y\":\""<<cli->getY()<<"\",\"moving\":\"false\"}}\n\n";
+                  //   std::cout<<id.str()<<std::endl;
+                      serv->broadcastPlayerData(cli->cli_addr,id.str());
+                            std::stringstream idd;
+                          idd<<"{\"me\":{\"respawn\":\"true\",\"x\":\""
+                      <<cli->getX()<<"\",\"y\":\""<<cli->getY()<<"\"}}\n\n";
+                  //   std::cout<<id.str()<<std::endl;
+                      serv->sendPlayerData(cli,idd.str());
+                      
+                       }
+                   }
+                   
+                   mtx.unlock();
                
                
           }
@@ -230,7 +252,8 @@ class Engine{
                           std::vector<Client*>*clients= serv->getClients();
                   for(int i=0;i<clients->size();i++){
                           Client * cli = (*clients)[i];
-                        if(prj.getOwner() == cli){
+                       
+                        if(prj.getOwner() == cli || cli->isDead()){
                             continue;
                         }
                       
@@ -239,8 +262,12 @@ class Engine{
                       
                          //kill player
                          std::cout<<i<<" was killed\n";
-                                 projectiles.erase(projectile);
-                                   projectile--;
+                         cli->kill();
+                         cli->incDeaths();
+                         cli->setMoving(false);
+                         prj.getOwner()->incKills();
+                          projectiles.erase(projectile);
+                           projectile--;
                       std::stringstream id;
                       id<<"id:"<<cli->cli_addr.sin_addr.s_addr<<":"<<"{\"Player\":{\"dead\":\"true\"}}\n\n";
                   //   std::cout<<id.str()<<std::endl;
