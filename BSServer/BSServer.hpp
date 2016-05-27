@@ -48,7 +48,7 @@ int fdmax;
 
  std::vector<Client*> *clients;
  std::string idenity = "96e419b4ec90d1409f5d";
- std::string map = "map2";
+ std::string map = "map3";
  public:  
 BSServer(){
  //InitServerCTX();
