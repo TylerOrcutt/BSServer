@@ -23,7 +23,7 @@ class Engine{
   public:
   Engine(BSServer *server){
       serv=server;
-      if(!map.loadMap("map2")){
+      if(!map.loadMap("map3")){
           std::cout<<"Map failed to load\n";
       }
       
@@ -139,6 +139,31 @@ class Engine{
                                      
                        }
                      }
+                     
+                             if((player=data->getItem("Join"))!=nullptr){
+                               if(player->getItem("name")!=nullptr){
+                               std::string name = player->getItem("name")->value;    
+                               mtx.lock();
+                                 cli->setName(name);
+                                 Block *blk = map.getSpawnPoint();
+                                 cli->move(blk->x,blk->y);
+                               mtx.unlock();
+                                 std::stringstream id;
+                      id<<"id:"<<cli->cli_addr.sin_addr.s_addr<<":"<<"{\"Player\":{\"respawn\":\"true\",\"x\":\""
+                      <<cli->getX()<<"\",\"y\":\""<<cli->getY()<<"\",\"moving\":\"false\"}}\n\n";
+                  //   std::cout<<id.str()<<std::endl;
+                      serv->broadcastPlayerData(cli->cli_addr,id.str());
+                            std::stringstream idd;
+                          idd<<"{\"me\":{\"Join\":\"true\",\"x\":\""
+                      <<cli->getX()<<"\",\"y\":\""<<cli->getY()<<"\"}}\n\n";
+                  //   std::cout<<id.str()<<std::endl;
+                      serv->sendPlayerData(cli,idd.str());
+                             
+                                     
+                       }
+                       delete data;
+                       continue;
+                     }
                     
                
                            std::stringstream id;
@@ -189,7 +214,7 @@ class Engine{
                       }
                 
                    std::cout.precision(9);
-             //  std::cout<<i<<"  Caculated X:"<<cx<<"  Y:"<<cy<<"  Angle:"<<angle<<std::endl;
+               std::cout<<i<<"  Caculated X:"<<cx<<"  Y:"<<cy<<"  Angle:"<<angle<<std::endl;
                
                  
                       
