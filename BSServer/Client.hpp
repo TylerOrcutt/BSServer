@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include "Helper.hpp"
+#include "Weapon.hpp"
 struct CommandMessage{
        CommandMessage(std::string c,unsigned long t){
            cmd = c;
@@ -24,6 +25,7 @@ class Client{
   float x=0,y=0;
   double angle=0;
   bool moving =false;
+  bool joined=false;
   unsigned long lastResponce = 0;
   unsigned long lastPing = 0;
   unsigned long pingTimeSent=0;
@@ -39,7 +41,9 @@ class Client{
   
   float kills=0;
   float deaths=0;
-  
+  float health=100;
+  float max_health=100;
+  Weapon *weapon;
   
   unsigned long lastUpdate=0;
   std::list<CommandMessage> * commands;
@@ -212,6 +216,24 @@ class Client{
     }
     void incKills(){
         kills++;
+    }
+    bool didJoin(){
+        return joined;
+    }
+    void setJoined(bool j){
+        joined=j;
+    }
+    float getHealth(){
+        return health;
+    }
+    void reset(){
+        dead=false;
+        health=max_health;
+        joined=false;
+        deaths=0;
+        kills=0;
+        moving=false;
+        commands->clear();
     }
     socklen_t clilen;
   struct sockaddr_in  cli_addr;

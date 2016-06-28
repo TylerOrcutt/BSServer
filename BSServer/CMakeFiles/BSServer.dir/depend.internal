@@ -10,6 +10,7 @@ CMakeFiles/BSServer.dir/DataHandle.cpp.o
  /home/twittumz/Desktop/git/BSServer/BSServer/Helper.hpp
  /home/twittumz/Desktop/git/BSServer/BSServer/HttpRequest.hpp
  /home/twittumz/Desktop/git/BSServer/BSServer/JSONParser.hpp
+ /home/twittumz/Desktop/git/BSServer/BSServer/Weapon.hpp
 CMakeFiles/BSServer.dir/main.cpp.o
  /home/twittumz/Desktop/git/BSServer/BSServer/BSServer.hpp
  /home/twittumz/Desktop/git/BSServer/BSServer/Client.hpp
@@ -21,4 +22,6 @@ CMakeFiles/BSServer.dir/main.cpp.o
  /home/twittumz/Desktop/git/BSServer/BSServer/JSONParser.hpp
  /home/twittumz/Desktop/git/BSServer/BSServer/Map.hpp
  /home/twittumz/Desktop/git/BSServer/BSServer/Projectile.hpp
+ /home/twittumz/Desktop/git/BSServer/BSServer/Weapon.hpp
+ /home/twittumz/Desktop/git/BSServer/BSServer/Weapons/Weapon_Pistol.hpp
  /home/twittumz/Desktop/git/BSServer/BSServer/main.cpp

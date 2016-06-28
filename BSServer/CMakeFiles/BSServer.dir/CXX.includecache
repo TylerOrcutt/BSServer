@@ -73,6 +73,8 @@ string
 -
 Helper.hpp
 /home/twittumz/Desktop/git/BSServer/BSServer/Helper.hpp
+Weapon.hpp
+/home/twittumz/Desktop/git/BSServer/BSServer/Weapon.hpp
 
 /home/twittumz/Desktop/git/BSServer/BSServer/Config.hpp
 string
@@ -84,6 +86,8 @@ iostream
 fstream
 -
 sstream
+-
+dirent.h
 -
 
 /home/twittumz/Desktop/git/BSServer/BSServer/DataHandle.cpp
@@ -135,6 +139,8 @@ thread
 -
 Projectile.hpp
 /home/twittumz/Desktop/git/BSServer/BSServer/Projectile.hpp
+Weapons/Weapon_Pistol.hpp
+/home/twittumz/Desktop/git/BSServer/BSServer/Weapons/Weapon_Pistol.hpp
 
 /home/twittumz/Desktop/git/BSServer/BSServer/Helper.hpp
 stdlib.h
@@ -183,6 +189,16 @@ vector
 /home/twittumz/Desktop/git/BSServer/BSServer/Projectile.hpp
 Client.hpp
 /home/twittumz/Desktop/git/BSServer/BSServer/Client.hpp
+
+/home/twittumz/Desktop/git/BSServer/BSServer/Weapon.hpp
+string
+-
+
+/home/twittumz/Desktop/git/BSServer/BSServer/Weapons/Weapon_Pistol.hpp
+../Weapon.hpp
+/home/twittumz/Desktop/git/BSServer/BSServer/Weapon.hpp
+string
+-
 
 /home/twittumz/Desktop/git/BSServer/BSServer/main.cpp
 iostream

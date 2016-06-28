@@ -61,7 +61,9 @@ class Map{
    }
     public:
    bool loadMap(std::string map){
-       std::cout<<"loading map\n";
+       std::cout<<"loading map "<< map<<"\n";
+       spawnPoints.clear();
+       Blocks.clear();
        std::string line;
        map="./maps/"+map;
         std::ifstream file(map.c_str());

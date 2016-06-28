@@ -29,6 +29,7 @@
 #include "Config.hpp"
 #include "HttpRequest.hpp"
 #include <mutex>  
+#define VERSION  "0.1.9"
 using namespace std;
 class BSServer{
  private:
@@ -48,7 +49,7 @@ int fdmax;
 
  std::vector<Client*> *clients;
  std::string idenity = "96e419b4ec90d1409f5d";
- std::string map = "map3";
+ std::string map="";
  public:  
 BSServer(){
  //InitServerCTX();
@@ -308,6 +309,15 @@ void setRunning(bool run){
 }
 bool isRunning(){
     return running;
+}
+void setMap(std::string _map){
+    map=_map;
+}
+std::string getMap(){
+    return map;
+}
+configuration * getConfig(){
+    return config;
 }
 /*serv=socket(AF_INET,SOCK_STREAM,0);
 if(serv<0){ cout<<"sock error\n"; return;}

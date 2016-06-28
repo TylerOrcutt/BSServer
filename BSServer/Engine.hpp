@@ -14,23 +14,67 @@
 #include <mutex>  
 #include <thread>
 #include "Projectile.hpp"
+#include "Weapons/Weapon_Pistol.hpp"
 class Engine{
     private:
     BSServer *serv;
    Map map;
    std::mutex mtx;  
    std::list<Projectile> projectiles;
+   int mapIndex=0;
+   long gameLength=300000;
+   unsigned long  startTime;
   public:
   Engine(BSServer *server){
       serv=server;
-      if(!map.loadMap("map3")){
-          std::cout<<"Map failed to load\n";
-      }
+
       
   }
-  
+  bool nextMap(){
+      if( serv->getConfig()->maps.size()<=mapIndex || mapIndex<0){
+          mapIndex=0;
+      }
+      
+      std::string mapfile = serv->getConfig()->maps[mapIndex];
+            if(!map.loadMap(mapfile)){
+          std::cout<<"Map failed to load\n";
+          serv->setMap("");
+          return false;
+      }
+          serv->setMap(mapfile);
+     
+      
+       startTime =Helper::getTime();
+       mapIndex++;
+      return true;
+  }
   void run(){
+     // serv->getConfig();
+     nextMap();
+     
       while(serv->isRunning()){
+          if(Helper::getTime() - startTime>= gameLength){
+              std::cout<<"Game Finish, changing maps\n";
+              nextMap();
+              //dump client command queue
+                        
+      mtx.lock();
+          std::vector<Client*>*clients= serv->getClients();
+            for(int i=0;i<clients->size();i++){
+         
+              Client* cli = (*clients)[i];
+              cli->reset();
+                 std::stringstream idd;
+                          idd<<"{\"server\":{\"map\":\""<<serv->getMap()<<"\"}}\n\n";
+                  //   std::cout<<id.str()<<std::endl;
+                      serv->sendPlayerData(cli,idd.str());
+            }
+           mtx.unlock();   
+          
+              projectiles.clear();
+              continue;
+          }
+          
       mtx.lock();
           std::vector<Client*>*clients= serv->getClients();
   mtx.unlock();
@@ -128,14 +172,19 @@ class Engine{
              
                      if((player=data->getItem("Projectile"))!=nullptr){
                                if(player->getItem("angle")!=nullptr){
+                                
                                float projectileAngle=atof(player->getItem("angle")->value.c_str());    
                                mtx.lock();
+                                 if(!cli->isDead()){
                                Projectile prj(cli->getX()+32, cli->getY()+32,projectileAngle);
                                prj.setLastUpdate(Helper::getTime()- (cli->getLatency()/2));
                                prj.setOwner(cli);
+                                     projectiles.push_back(prj);
+                                     std::cout<<"Added Projectile\n";
+                                 }
                                mtx.unlock();
-                               projectiles.push_back(prj);
-                               std::cout<<"Added Projectile\n";
+                         
+                           
                                      
                        }
                      }
@@ -145,9 +194,10 @@ class Engine{
                                std::string name = player->getItem("name")->value;    
                                mtx.lock();
                                  cli->setName(name);
+                                 std::cout<<name<<" has joined\n";
                                  Block *blk = map.getSpawnPoint();
                                  cli->move(blk->x,blk->y);
-                               mtx.unlock();
+                              
                                  std::stringstream id;
                       id<<"id:"<<cli->cli_addr.sin_addr.s_addr<<":"<<"{\"Player\":{\"respawn\":\"true\",\"x\":\""
                       <<cli->getX()<<"\",\"y\":\""<<cli->getY()<<"\",\"moving\":\"false\"}}\n\n";
@@ -158,7 +208,7 @@ class Engine{
                       <<cli->getX()<<"\",\"y\":\""<<cli->getY()<<"\"}}\n\n";
                   //   std::cout<<id.str()<<std::endl;
                       serv->sendPlayerData(cli,idd.str());
-                             
+                              mtx.unlock();
                                      
                        }
                        delete data;
@@ -279,14 +329,13 @@ class Engine{
                   for(int i=0;i<clients->size();i++){
                           Client * cli = (*clients)[i];
                        
-                        if(prj.getOwner() == cli || cli->isDead()){
+                        if(prj.getOwner() == cli || (*clients)[i]->isDead()){
                             continue;
                         }
                       
                        if(prj.getX()+20>=cli->getX() && prj.getX()<= cli->getX()+64 
                        && prj.getY()+20 >=cli->getY() && prj.getY()<=cli->getY()+64){
-                      
-                         //kill player
+                  //kill player
                          std::cout<<i<<" was killed\n";
                          cli->kill();
                          cli->incDeaths();

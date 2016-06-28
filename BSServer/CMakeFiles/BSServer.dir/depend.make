@@ -9,6 +9,7 @@ CMakeFiles/BSServer.dir/DataHandle.cpp.o: Dictionary.hpp
 CMakeFiles/BSServer.dir/DataHandle.cpp.o: Helper.hpp
 CMakeFiles/BSServer.dir/DataHandle.cpp.o: HttpRequest.hpp
 CMakeFiles/BSServer.dir/DataHandle.cpp.o: JSONParser.hpp
+CMakeFiles/BSServer.dir/DataHandle.cpp.o: Weapon.hpp
 
 CMakeFiles/BSServer.dir/main.cpp.o: BSServer.hpp
 CMakeFiles/BSServer.dir/main.cpp.o: Client.hpp
@@ -20,5 +21,7 @@ CMakeFiles/BSServer.dir/main.cpp.o: HttpRequest.hpp
 CMakeFiles/BSServer.dir/main.cpp.o: JSONParser.hpp
 CMakeFiles/BSServer.dir/main.cpp.o: Map.hpp
 CMakeFiles/BSServer.dir/main.cpp.o: Projectile.hpp
+CMakeFiles/BSServer.dir/main.cpp.o: Weapon.hpp
+CMakeFiles/BSServer.dir/main.cpp.o: Weapons/Weapon_Pistol.hpp
 CMakeFiles/BSServer.dir/main.cpp.o: main.cpp
 
