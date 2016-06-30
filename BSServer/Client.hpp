@@ -32,6 +32,7 @@ class Client{
   unsigned long pongTimeReceived=0;
   unsigned long pingsSent=0;
   unsigned long totalPing=0;
+  unsigned long latency=0;
   
   
   bool dead=false;
@@ -108,6 +109,7 @@ class Client{
     }
     void setLastResponce(unsigned long rp){
         lastResponce=rp;
+       
     }
     
     unsigned long getLastPing(){
@@ -139,9 +141,10 @@ class Client{
         pongTimeReceived=rp;
        totalPing+= getPongTimeReceived()-getLastPing();
        pingsSent++;
+       latency = pongTimeReceived - getLastPing();
     }
     int getLatency(){
-        return getPongTimeReceived()-getLastPing();
+        return latency;
     }
      int getAverageLatency(){
         return (pingsSent>0)? totalPing/pingsSent:0;

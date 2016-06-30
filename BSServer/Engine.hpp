@@ -23,6 +23,10 @@ class Engine{
    std::list<Projectile> projectiles;
    int mapIndex=0;
    long gameLength=300000;
+   long timeBetweenGames=15000;
+   
+   bool ishalftime=false;
+   unsigned long halfStartTime;
    unsigned long  startTime;
   public:
   Engine(BSServer *server){
@@ -53,12 +57,15 @@ class Engine{
      nextMap();
      
       while(serv->isRunning()){
-          if(Helper::getTime() - startTime>= gameLength){
-              std::cout<<"Game Finish, changing maps\n";
-              nextMap();
-              //dump client command queue
-                        
-      mtx.lock();
+          
+          if(ishalftime){
+              if(Helper::getTime()-halfStartTime<timeBetweenGames){
+              continue;
+              }
+              std::cout<<"HalfTime over starting Game\n";
+              
+               nextMap();
+               mtx.lock();
           std::vector<Client*>*clients= serv->getClients();
             for(int i=0;i<clients->size();i++){
          
@@ -70,8 +77,15 @@ class Engine{
                       serv->sendPlayerData(cli,idd.str());
             }
            mtx.unlock();   
-          
-              projectiles.clear();
+               projectiles.clear();
+                ishalftime=false;
+          }
+          if(Helper::getTime() - startTime>= gameLength){
+              std::cout<<"Game Finish, Half Time\n";
+            
+               ishalftime=true;
+               halfStartTime= Helper::getTime();
+               projectiles.clear();
               continue;
           }
           
@@ -98,14 +112,54 @@ class Engine{
                       std::cout<<"Sent ping\n";
                       
                   }
-          
+                 //    std::cout<<"queue length "<< cli->commands_size()<<"\n";
                   if(cli->commands_size()>0){
                       CommandMessage lst = cli->popCommand();
                       std::string cmd = lst.cmd;
                     //  std::cout<<"ts: "<<lst.timestamp<<"   "<<cmd<<std::endl;
                     Dictionary * data = JSONParser::parseJson(lst.cmd);
                  //  data->printDictionary();
+                    
+                    
+                    
                     DictionaryItem * player;
+                               if((player=data->getItem("Join"))!=nullptr){
+                               if(player->getItem("name")!=nullptr){
+                               std::string name = player->getItem("name")->value;    
+                               mtx.lock();
+                                 cli->setName(name);
+                                 std::cout<<name<<" has joined\n";
+                                 Block *blk = map.getSpawnPoint();
+                                 cli->move(blk->x,blk->y);
+                                 cli->setJoined(true);
+                              
+                                 std::stringstream id;
+                      id<<"id:"<<cli->cli_addr.sin_addr.s_addr<<":"<<"{\"Player\":{\"respawn\":\"true\",\"x\":\""
+                      <<cli->getX()<<"\",\"y\":\""<<cli->getY()<<"\",\"moving\":\"false\"}}\n\n";
+                  //   std::cout<<id.str()<<std::endl;
+                      serv->broadcastPlayerData(cli->cli_addr,id.str());
+                            std::stringstream idd;
+                          idd<<"{\"me\":{\"Join\":\"true\",\"x\":\""
+                      <<cli->getX()<<"\",\"y\":\""<<cli->getY()<<"\"}}\n\n";
+                  //   std::cout<<id.str()<<std::endl;
+                      serv->sendPlayerData(cli,idd.str());
+                              mtx.unlock();
+                                     
+                       }
+                       delete data;
+                       continue;
+                     }
+                    
+                    
+                    if(!cli->didJoin()){
+                        delete data;
+                        continue;
+                    }
+                    
+                    
+                    
+                    
+                    
                     if((player=data->getItem("Player"))!=nullptr){
                      
                        if(player->getItem("x")!=nullptr){
@@ -130,7 +184,7 @@ class Engine{
                      //  moving=false;
                        mtx.lock();
                        //cli->move(x,y);
-                   std::cout<<i<<"  STOPPED:  X:"<<x<<"  Y:"<<y<<"  Angle:"<<angle<<std::endl;
+                 //  std::cout<<i<<"  STOPPED:  X:"<<x<<"  Y:"<<y<<"  Angle:"<<angle<<std::endl;
                       
                 
                        // cli->setLastUpdate(Helper::getTimeNano());
@@ -138,16 +192,16 @@ class Engine{
                 //     cli->setLastUpdate(Helper::getTime());
          
                    mtx.unlock(); 
-                       std::cout<<i<<" STOPED MOVING\n";
-               std::cout<<"X:"<<x<<"  Y:"<<y<<"  Angle:"<<angle<<std::endl;
+                      std::cout<<i<<" STOPED MOVING\n";
+                      std::cout<<"X:"<<x<<"  Y:"<<y<<"  Angle:"<<angle<<std::endl;
                
                 //    continue;
                       }else{
                           if(!moving){
-                       std::cout<<i<<" Started MOVING\n";
+                    //   std::cout<<i<<" Started MOVING\n";
                        mtx.lock();
                        cli->move(x,y);
-                         std::cout<<i<<"  STARTED:  X:"<<x<<"  Y:"<<y<<"  Angle:"<<cli->getAngle()<<std::endl;
+                   //      std::cout<<i<<"  STARTED:  X:"<<x<<"  Y:"<<y<<"  Angle:"<<cli->getAngle()<<std::endl;
                       
                 
                         cli->setAngle(angle);
@@ -180,7 +234,7 @@ class Engine{
                                prj.setLastUpdate(Helper::getTime()- (cli->getLatency()/2));
                                prj.setOwner(cli);
                                      projectiles.push_back(prj);
-                                     std::cout<<"Added Projectile\n";
+                                   //  std::cout<<"Added Projectile\n";
                                  }
                                mtx.unlock();
                          
@@ -189,32 +243,7 @@ class Engine{
                        }
                      }
                      
-                             if((player=data->getItem("Join"))!=nullptr){
-                               if(player->getItem("name")!=nullptr){
-                               std::string name = player->getItem("name")->value;    
-                               mtx.lock();
-                                 cli->setName(name);
-                                 std::cout<<name<<" has joined\n";
-                                 Block *blk = map.getSpawnPoint();
-                                 cli->move(blk->x,blk->y);
-                              
-                                 std::stringstream id;
-                      id<<"id:"<<cli->cli_addr.sin_addr.s_addr<<":"<<"{\"Player\":{\"respawn\":\"true\",\"x\":\""
-                      <<cli->getX()<<"\",\"y\":\""<<cli->getY()<<"\",\"moving\":\"false\"}}\n\n";
-                  //   std::cout<<id.str()<<std::endl;
-                      serv->broadcastPlayerData(cli->cli_addr,id.str());
-                            std::stringstream idd;
-                          idd<<"{\"me\":{\"Join\":\"true\",\"x\":\""
-                      <<cli->getX()<<"\",\"y\":\""<<cli->getY()<<"\"}}\n\n";
-                  //   std::cout<<id.str()<<std::endl;
-                      serv->sendPlayerData(cli,idd.str());
-                              mtx.unlock();
-                                     
-                       }
-                       delete data;
-                       continue;
-                     }
-                    
+                  
                
                            std::stringstream id;
                      id<<"id:"<<cli->cli_addr.sin_addr.s_addr<<":"<<cmd.substr(0,cmd.length()-2)<<",\"latency\":\"%L\"}}\n\n";
@@ -227,7 +256,7 @@ class Engine{
                        
              
                   }             
-                  //    std::cout<<i<<"  Player X:"<<cli->getX()<<"  Y:"<<cli->getY()<<"  Angle:"<<angle<<std::endl;
+                    //  std::cout<<i<<"  Player X:"<<cli->getX()<<"  Y:"<<cli->getY()<<"  Angle:"<<angle<<std::endl;
                       
                  
                       if(moving && !cli->isDead()){
@@ -239,13 +268,29 @@ class Engine{
                             unsigned long ct=  Helper::getTime();
                             if(!cli->isMoving() || angle!=cli->getAngle()){
                                 ct-=(cli->getLatency()/2);
-                             
+                           
+                                long dt =  (ct-cli->getLastUpdate());
+                             float cx = cli->getX()+ (((float)cos(cli->getAngle()))*(dt*0.5f));
+                             float cy = cli->getY()+(((float)sin(cli->getAngle()))*(dt*0.5f));
+                               cli->move(cx,cy);
+                              cli->setLastUpdate(ct);
+                              ct=  Helper::getTime();
+                                    cli->setAngle(angle);
+                            
+                          if(!cli->isMoving() ){
+                              cli->setLastUpdate(ct);
+                             std::cout<<i<<"  STOPED: Caculated X:"<<cx<<"  Y:"<<cy<<"  Angle:"<<angle<<std::endl;
+                                        cli->setMoving(false);
+                         mtx.unlock();
+                              continue;
+                          }
+                                
                             }else{
                                 
                             }
                        
                           long dt =  (ct-cli->getLastUpdate());
-                  
+             
                
                  //    std::cout<<dt<<"\n";
                      
@@ -253,19 +298,20 @@ class Engine{
                      float cx = cli->getX()+ (((float)cos(cli->getAngle()))*(dt*0.5f));
                      float cy = cli->getY()+(((float)sin(cli->getAngle()))*(dt*0.5f));
                     //   cli->setLastUpdate(ct);
-                    cli->setAngle(angle);
+                                 cli->setAngle(angle);
                       cli->setLastUpdate(ct);
                     if(map.checkCollision(cx,cy,64,64)){
-                        std::cout<<"COLLISION\n";
+                  //     std::cout<<"COLLISION\n";
                        cli->setMoving(false);
                       
                       }else{
                       cli->move(cx,cy);
                       }
                 
-                   std::cout.precision(9);
-               std::cout<<i<<"  Caculated X:"<<cx<<"  Y:"<<cy<<"  Angle:"<<angle<<std::endl;
-               
+                   std::cout.precision(16);
+                   if(!cli->isMoving()){
+             std::cout<<i<<"  Caculated X:"<<cx<<"  Y:"<<cy<<"  Angle:"<<angle<<std::endl;
+                   }
                  
                       
                          mtx.unlock();
@@ -311,7 +357,7 @@ class Engine{
                       prj.move(cx,cy);
                    prj.setLastUpdate(ct);
                   if(prj.getTimeAlive()<=0){
-                       std::cout<<"Projectile REMOVED - TIMEOUT\n";
+                    //   std::cout<<"Projectile REMOVED - TIMEOUT\n";
                         projectiles.erase(projectile);
                         projectile--;
                         continue;
@@ -319,7 +365,7 @@ class Engine{
               //check collision
              
                     if(map.checkCollision(cx,cy,20,20)){
-                        std::cout<<"Projectile Map collision\n";
+                    //    std::cout<<"Projectile Map collision\n";
                         projectiles.erase(projectile);
                         projectile--;
                       //  std::cout<<"Removed PRojectile\n";
