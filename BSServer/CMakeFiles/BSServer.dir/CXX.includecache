@@ -165,6 +165,8 @@ netinet/in.h
 -
 sstream
 -
+openssl/ssl.h
+-
 
 /home/twittumz/Desktop/git/BSServer/BSServer/JSONParser.hpp
 vector
@@ -193,6 +195,8 @@ Client.hpp
 /home/twittumz/Desktop/git/BSServer/BSServer/Weapon.hpp
 string
 -
+Helper.hpp
+/home/twittumz/Desktop/git/BSServer/BSServer/Helper.hpp
 
 /home/twittumz/Desktop/git/BSServer/BSServer/Weapons/Weapon_Pistol.hpp
 ../Weapon.hpp

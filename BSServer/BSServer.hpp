@@ -59,8 +59,8 @@ BSServer(){
  config =Config::LoadConfig();
  std::string paramstr = Config::genParamString(config);
  //std::cout<<paramstr<<std::endl;
-std::string responce=HTTPRequest::HTTPPostRequest("rustednail.ddns.net","updateserver",paramstr);
-if(responce.substr(0,12)=="unauthorized" || responce==""){
+std::string responce=HTTPRequest::HTTPSPostRequest("rustednail.ddns.net","updateserver",paramstr);
+if(responce.substr(0,14)!="Login: Success"){
     std::cout<<"Exiting.\n";
     running=false;
 }

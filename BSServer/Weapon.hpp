@@ -9,7 +9,7 @@ class Weapon {
     std::string type="Default Weapon";
     long lastTimeFired=0;
     public:
-    void Weapon(_damage=1.f,_fireRate=10.f,std::string _type="Default Weapon"){
+   Weapon(float _damage=1.f,float _fireRate=10.f,std::string _type="Default Weapon"){
         damage=_damage;
         fireRate=_fireRate;
         type=_type;
