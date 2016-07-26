@@ -16,6 +16,8 @@ struct configuration{
     std::string user;
     std::string passwd;
     std::vector<std::string> maps;
+    int pingRate=300000;
+    std::string key="";
    
    
     
@@ -40,6 +42,7 @@ class Config{
         config->port=9898;
         config->user="twittumz";
         config->passwd="asd";
+        config->key="798e836cb911c23188fd1fb528a12497fae4a8f0";
         config->maps = *Config::getMaps(); 
         config->gameLength=300000;
         for(int i=0;i<config->maps.size();i++){
@@ -74,8 +77,17 @@ class Config{
         ss<<"&ServerName="<<config->ServerName;
         ss<<"&IP="<<config->ip;
         ss<<"&port="<<config->port;
-        ss<<"&username="<<config->user;
+       ss<<"&username="<<config->user;
         ss<<"&passwd="<<config->passwd;
+        ss<<"&key="<<config->key;
+          ss<<"&version="<<VERSION;
+        return ss.str();
+    }
+
+        static std::string genParamString(configuration * config,int clients){
+        std::stringstream ss;
+         ss<<genParamString(config);
+               ss<<"&clients="<<clients;
         return ss.str();
     }
     

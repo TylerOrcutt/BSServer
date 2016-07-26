@@ -2,7 +2,7 @@
 //TODO: android sockets are wierd fix to work with them..
 
 #define MAX_CLIENTS 16
-
+#define VERSION  "0.1.1"
 #include <iostream>
 #include <string.h>
 #include <sstream>
@@ -29,7 +29,7 @@
 #include "Config.hpp"
 #include "HttpRequest.hpp"
 #include <mutex>  
-#define VERSION  "0.1.9"
+
 using namespace std;
 class BSServer{
  private:
@@ -59,11 +59,17 @@ BSServer(){
  config =Config::LoadConfig();
  std::string paramstr = Config::genParamString(config);
  //std::cout<<paramstr<<std::endl;
-std::string responce=HTTPRequest::HTTPSPostRequest("rustednail.ddns.net","updateserver",paramstr);
+ Cookie cookie;
+std::string responce=HTTPRequest::HTTPSPostRequest("rustednail.ddns.net","serverLogin",paramstr,&cookie);
 if(responce.substr(0,14)!="Login: Success"){
     std::cout<<"Exiting.\n";
     running=false;
 }
+
+responce=HTTPRequest::HTTPSPostRequest("rustednail.ddns.net","updateserver",paramstr,&cookie);
+
+   std::cout<<"Cookie:"<<cookie.id<<std::endl<<"path: "<<cookie.path<<std::endl;
+      
 }
 
 /* *** Function definations */

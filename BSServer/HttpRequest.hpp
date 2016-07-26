@@ -8,8 +8,16 @@
 #include <netinet/in.h>
 #include <sstream>
 #include <openssl/ssl.h>
+struct Cookie{
+    std::string id;
+    std::string path;
+    std::string host;
+};
 class HTTPRequest{
+ 
     public:
+ 
+       
   static std::string HTTPPostRequest(std::string webhost,std::string page,std::string params=""){
        // std::cout<<"Positng "<<url<<std::endl;
         
@@ -57,20 +65,21 @@ class HTTPRequest{
            htmlstream<<cur;
          }
      
-       std::string html = htmlstream.str();
-         
+     std::string html = htmlstream.str();
+   
        for(int i=0;i<html.length();i++){
+      
            if(html.substr(i,4)=="\r\n\r\n"){
                      html = html.substr(i+4,html.length()-i-4);  
            }
        }
        
-       //std::cout<<"\n\n";
+
        std::cout<<html<<std::endl;
         close(sock);
       return html;
   }
-      static std::string HTTPSPostRequest(std::string webhost,std::string page,std::string params=""){
+      static std::string HTTPSPostRequest(std::string webhost,std::string page,std::string params="",Cookie *cookie=nullptr){
        // std::cout<<"Positng "<<url<<std::endl;
         SSL_load_error_strings();
         SSL_library_init();
@@ -108,6 +117,10 @@ class HTTPRequest{
         std::stringstream ss;
         ss<<"POST /"<<page<<" HTTP/1.1\r\n";
         ss<<"Host: "<<webhost<<"\r\n";
+       if(cookie!=nullptr){
+        ss<<"Cookie: "<<cookie->id<<"\r\n";
+       }
+
         ss<<"Accept: */*\r\n";
         ss<<"Connection: close\r\n";
         ss<<"Content-Type: application/x-www-form-urlencoded\r\n";
@@ -118,7 +131,7 @@ class HTTPRequest{
         SSL*ssl = SSL_new(ctx);
         SSL_set_fd(ssl,sock);
         SSL_connect(ssl);
-      ShowCerts(ssl);
+  //    ShowCerts(ssl);
         if(SSL_write(ssl,ss.str().c_str(),ss.str().length())<0){
      //   if(send(sock,ss.str().c_str(),ss.str().length(),0)<0){
             std::cout<<"error making request\n";
@@ -132,14 +145,25 @@ class HTTPRequest{
          }
      
        std::string html = htmlstream.str();
-         
+        //   std::cout<<html<<std::endl;
+        
        for(int i=0;i<html.length();i++){
+                if(html.substr(i,12)=="Set-Cookie: "){
+                for(i+=12;i<html.length() && html.substr(i,1)!=";";i++){
+                    cookie->id+=html.substr(i,1);
+                }
+                i+=7;
+                for(;i<html.length() && html.substr(i,2)!="\r\n";i++){
+                    cookie->path+=html.substr(i,1);
+                }
+           }
            if(html.substr(i,4)=="\r\n\r\n"){
                      html = html.substr(i+4,html.length()-i-4);  
            }
        }
        
        //std::cout<<"\n\n";
+     //  std::cout<<"Cookie:"<<cookie->id<<std::endl<<"path: "<<cookie->path<<std::endl;
        std::cout<<html<<std::endl;
         close(sock);
       return html;
