@@ -28,6 +28,8 @@ class Engine{
    bool ishalftime=false;
    unsigned long halfStartTime;
    unsigned long  startTime;
+
+ 
   public:
   Engine(BSServer *server){
       serv=server;
@@ -57,7 +59,7 @@ class Engine{
      nextMap();
      
       while(serv->isRunning()){
-          
+     
           if(ishalftime){
               if(Helper::getTime()-halfStartTime<timeBetweenGames){
               continue;

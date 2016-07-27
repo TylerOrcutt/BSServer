@@ -166,6 +166,11 @@ class HTTPRequest{
      //  std::cout<<"Cookie:"<<cookie->id<<std::endl<<"path: "<<cookie->path<<std::endl;
        std::cout<<html<<std::endl;
         close(sock);
+       SSL_CTX_free(ctx); 
+ FIPS_mode_set(0);
+CRYPTO_set_locking_callback(NULL);
+CRYPTO_set_id_callback(NULL);
+ERR_free_strings();
       return html;
   }
   

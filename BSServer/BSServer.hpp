@@ -46,11 +46,12 @@ class BSServer{
   fd_set master;
 fd_set read_fds;
 int fdmax;
-
+  unsigned long lastServerUpdate=0;
  std::vector<Client*> *clients;
  std::string idenity = "96e419b4ec90d1409f5d";
  std::string map="";
  public:  
+  Cookie cookie;
 BSServer(){
  //InitServerCTX();
 // LoadCertificates( "BS_ALPHA_CERT.pem", "BS_ALPHA_CERT.pem");
@@ -59,16 +60,15 @@ BSServer(){
  config =Config::LoadConfig();
  std::string paramstr = Config::genParamString(config);
  //std::cout<<paramstr<<std::endl;
- Cookie cookie;
+
 std::string responce=HTTPRequest::HTTPSPostRequest("rustednail.ddns.net","serverLogin",paramstr,&cookie);
 if(responce.substr(0,14)!="Login: Success"){
     std::cout<<"Exiting.\n";
     running=false;
 }
 
-responce=HTTPRequest::HTTPSPostRequest("rustednail.ddns.net","updateserver",paramstr,&cookie);
 
-   std::cout<<"Cookie:"<<cookie.id<<std::endl<<"path: "<<cookie.path<<std::endl;
+   //std::cout<<"Cookie:"<<cookie.id<<std::endl<<"path: "<<cookie.path<<std::endl;
       
 }
 
@@ -106,15 +106,21 @@ if(bind(serv,(struct sockaddr*)&serv_addr,sizeof serv_addr)<0){
   }
   
   //set to non blocking socket
-  /*
+  
  int nonblock=1;
  if(fcntl(serv,F_SETFL,O_NONBLOCK,nonblock)==-1){
      cout<<"failed to set non blocking\n";
      return;
- }*/
+ } 
 
 while(running){
-   //usleep(1000);
+   usleep(500);
+          if(Helper::getTime()-lastServerUpdate>=config->pingRate){
+                          updateServer();
+                         lastServerUpdate= Helper::getTime();
+                         std::cout<<"Updated Server info\n";
+                        
+             }
     int bytes=0;
      char buffer[512];
     if((bytes=recvfrom(serv,buffer,sizeof(buffer),0,(struct sockaddr*)&cli_addr,&clilen))<=0){
@@ -210,7 +216,7 @@ for(int i=0;i<retData.length();i++){
      mtx.lock();
   cli->pushCommand(retData);
      mtx.unlock();
-    
+   
 }//
 close(serv);
 }
@@ -495,6 +501,26 @@ void InitServerCTX()
       }
     }
   
+bool updateServer(){
+ std::string paramstr = Config::genParamString(clients->size());
+ //std::cout<<paramstr<<std::endl;
 
+std::string responce=HTTPRequest::HTTPSPostRequest("rustednail.ddns.net","updateserver",paramstr,&cookie);
+if(responce.substr(0,14)!="Update Success"){
+     paramstr = Config::genParamString(config);
+   responce=HTTPRequest::HTTPSPostRequest("rustednail.ddns.net","serverLogin",paramstr,&cookie);
+if(responce.substr(0,14)!="Login: Success"){
+    std::cout<<"Exiting.\n";
+    mtx.lock();
+    running=false;
+    mtx.unlock();
+    return true;
+}
+}else{
+    //update success
+}
+
+return true;
+}
 
 };

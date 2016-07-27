@@ -16,7 +16,7 @@ struct configuration{
     std::string user;
     std::string passwd;
     std::vector<std::string> maps;
-    int pingRate=300000;
+    int pingRate=50000;
     std::string key="";
    
    
@@ -84,10 +84,10 @@ class Config{
         return ss.str();
     }
 
-        static std::string genParamString(configuration * config,int clients){
+        static std::string genParamString(int clients){
         std::stringstream ss;
-         ss<<genParamString(config);
-               ss<<"&clients="<<clients;
+
+               ss<<"clients="<<clients;
         return ss.str();
     }
     
