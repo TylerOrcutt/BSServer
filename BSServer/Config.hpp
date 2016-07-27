@@ -16,7 +16,7 @@ struct configuration{
     std::string user;
     std::string passwd;
     std::vector<std::string> maps;
-    int pingRate=50000;
+    int pingRate=300000;
     std::string key="";
    
    
@@ -36,7 +36,7 @@ class Config{
         //defaults 
         std::cout<<"Failed to load config file, using defaults.\n";
         configuration * config = new configuration;
-        config->max_clients = 300;
+        config->max_clients = 30;
         config->ServerName= "Development";
         config->ip="10.0.0.3";
         config->port=9898;
